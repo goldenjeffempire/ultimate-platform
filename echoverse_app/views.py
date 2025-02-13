@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment
-from .models import BlogPost, Collaboration, Product
+from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, generate_ad_content, chatbot
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost
+from django.utils import timezone
 
 # AI Design Design
 def ai_design(request, industry):
@@ -73,3 +74,28 @@ def process_order_payment(request, order_id):
         return JsonResponse({'message': 'Payment successful'})
     else:
         return JsonResponse({'message': 'Payment failed'}, status=400)
+
+# Generate Ad Content
+def generate_ad(request, product_name, target_audience):
+    ad_content = generate_ad_content(product_name, target_audience)
+    return JsonResponse({'ad_content': ad_content})
+
+# Create Sales Funnel
+def create_sales_funnel(request, name, steps, conversion_rate):
+    funnel = SalesFunnel.objects.create(
+        name=name,
+        steps=steps,
+        conversion_rate=conversion_rate
+    )
+    return JsonResponse({'message': f'Sales funnel {funnel.name} created successfully'})
+
+# Schedule Post
+def schedule_post(request, content, scheduled_for):
+    scheduled_for = timezone.datetime.fromisoformat(scheduled_for)  # Convert string to datetime
+    post = SocialMediaPost.objects.create(content=content, scheduled_for=scheduled_for)
+    return JsonResponse({'message': f"Post scheduled for {scheduled_for}"})
+
+# Chatbot
+def chatbot(request, query):
+    response = chatbot_response(query)
+    return JsonResponse({'response': response})

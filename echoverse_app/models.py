@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Website(models.Model):
@@ -96,3 +97,37 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+
+class Customer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Customer {self.user.username}"
+
+class EmailCampaign(models.Model):
+    name = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255)
+    content = models.TextField()
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class SalesFunnel(models.Model):
+    name = models.CharField(max_length=255)
+    steps = models.TextField()  # Comma-separated list of funnel steps
+    conversion_rate = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+class SocialMediaPost(models.Model):
+    content = models.TextField()
+    scheduled_for = models.DateTimeField()
+    is_published = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Post scheduled for {self.scheduled_for}"
