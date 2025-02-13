@@ -1,3 +1,15 @@
+<h1>{{ product.name }}</h1>
+<p>{{ product.description }}</p>
+<p>Price: ${{ product.price }}</p>
+<p>Stock: {{ product.stock }}</p>
+
+<!-- Assuming logged-in users can add the product to cart -->
+{% if user.is_authenticated %}
+    <button>Add to Cart</button>  <!-- Placeholder for Add to Cart functionality -->
+{% else %}
+    <p>Please log in to purchase this product.</p>
+{% endif %}
+
 <h2>{{ product.name }}</h2>
 <p>{{ product.description }}</p>
 

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm
 
 # AI Design Design
 def ai_design(request, industry):
@@ -214,7 +214,27 @@ def submit_product_review(request, product_id):
 
 # Product Details
 def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     reviews = ProductReview.objects.filter(product=product)
     return render(request, 'product_detail.html', {'product': product, 'reviews': reviews})
 
+# MarketPlace
+def marketplace(request):
+    products = Product.objects.filter(productlisting__active=True)  # Filter active listings only
+    return render(request, 'marketplace.html', {'products': products})
+
+# List Product
+@login_required
+def list_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.seller = request.user
+            product.save()
+            ProductListing.objects.create(product=product)
+            return redirect('marketplace')
+    else:
+        form = ProductForm()
+
+    return render(request, 'list_product.html', {'form': form})
