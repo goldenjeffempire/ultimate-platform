@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.home, name='home'),
     path('ai-design/<str:industry>/', views.ai_design, name='ai_design'),
     path('add-section/<int:page_id>/<str:section_name>/<str:content>/', views.add_section, name='add_section'),
     path('get-page-sections/<int:page_id>/', views.get_page_sections, name='get_page_sections'),
@@ -16,4 +17,8 @@ urlpatterns = [
     path('create-sales-funnel/', views.create_sales_funnel, name='create_sales_funnel'),
     path('schedule-post/', views.schedule_post, name='schedule_post'),
     path('chatbot/<str:query>/', views.chatbot, name='chatbot'),
+    path('dashboard/', views.user_dashboard, name='user_dashboard'),
+    path('contact/', views.contact, name='contact'),
+    path('terms-and-policies/', views.terms_and_policies, name='terms_and_policies'),
+    path('footer/', views.footer, name='footer'),
 ]
