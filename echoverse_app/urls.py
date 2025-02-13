@@ -11,4 +11,9 @@ urlpatterns = [
     path('generate-product-info/<int:product_id>/', views.generate_product_info, name='generate_product_info'),
     path('update-inventory/<int:product_id>/<int:quantity>/', views.update_inventory, name='update_inventory'),
     path('check-inventory/<int:product_id>/', views.check_inventory, name='check_inventory'),
+    path('send-campaign/<int:campaign_id>/', views.send_campaign, name='send_campaign'),
+    path('generate-ad/<str:product_name>/<str:target_audience>/', views.generate_ad, name='generate_ad'),
+    path('create-sales-funnel/', views.create_sales_funnel, name='create_sales_funnel'),
+    path('schedule-post/', views.schedule_post, name='schedule_post'),
+    path('chatbot/<str:query>/', views.chatbot, name='chatbot'),
 ]
