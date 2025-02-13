@@ -25,4 +25,7 @@ urlpatterns = [
     path('privacy-preferences/', views.privacy_preferences, name='privacy_preferences'),
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
     path('submit-review/<int:product_id>/', views.submit_product_review, name='submit_product_review'),
+    path('marketplace/', views.marketplace, name='marketplace'),
+    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('list-product/', views.list_product, name='list_product'),
 ]

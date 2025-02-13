@@ -76,9 +76,20 @@ class Product(models.Model):
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    seller = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+class ProductListing(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    marketplace_listing = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Listing for {self.product.name}"
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
