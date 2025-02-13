@@ -131,3 +131,41 @@ class SocialMediaPost(models.Model):
 
     def __str__(self):
         return f"Post scheduled for {self.scheduled_for}"
+
+class HomePage(models.Model):
+    title = models.CharField(max_length=255)
+    intro_text = models.TextField()
+    featured_products = models.ManyToManyField(Product)
+    banner_image = models.ImageField(upload_to='home/', null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+class UserDashboard(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Dashboard"
+
+class Contact(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    message = models.TextField()
+
+    def __str__(self):
+        return f"Message from {self.name}"
+
+class TermsAndPolicies(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+class Footer(models.Model):
+    content = models.TextField()
+
+    def __str__(self):
+        return "Footer Content"

@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+
 
 # AI Design Design
 def ai_design(request, industry):
@@ -99,3 +101,36 @@ def schedule_post(request, content, scheduled_for):
 def chatbot(request, query):
     response = chatbot_response(query)
     return JsonResponse({'response': response})
+
+# HomePage
+def home(request):
+    homepage = HomePage.objects.first()
+    return render(request, 'home.html', {'homepage': homepage})
+
+# User Dashboard
+@login_required
+def user_dashboard(request):
+    dashboard = UserDashboard.objects.get(user=request.user)
+    return render(request, 'dashboard.html', {'dashboard': dashboard})
+
+# Contact
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        Contact.objects.create(name=name, email=email, message=message)
+        return JsonResponse({'message': 'Your message has been sent successfully.'})
+
+    return render(request, 'contact.html')
+
+# Terms And Policies
+def terms_and_policies(request):
+    terms = TermsAndPolicies.objects.first()
+    return render(request, 'terms_and_policies.html', {'terms': terms})
+
+# Footer
+def footer(request):
+    footer_content = Footer.objects.first()
+    return render(request, 'footer.html', {'footer': footer_content})
+
