@@ -21,4 +21,6 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('terms-and-policies/', views.terms_and_policies, name='terms_and_policies'),
     path('footer/', views.footer, name='footer'),
+    path('security-settings/', views.security_settings, name='security_settings'),
+    path('privacy-preferences/', views.privacy_preferences, name='privacy_preferences'),
 ]

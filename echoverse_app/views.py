@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer
+from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
@@ -134,3 +134,49 @@ def footer(request):
     footer_content = Footer.objects.first()
     return render(request, 'footer.html', {'footer': footer_content})
 
+# Security Settings
+@login_required
+def security_settings(request):
+    settings, created = UserSecuritySettings.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        settings.two_factor_enabled = request.POST.get('two_factor_enabled') == 'on'
+        settings.email_notifications_enabled = request.POST.get('email_notifications_enabled') == 'on'
+        settings.password_changed_at = timezone.now()
+        settings.save()
+        return redirect('security_settings')
+
+    return render(request, 'security_settings.html', {'settings': settings})
+y
+# Privacy Preferences
+@login_required
+def privacy_preferences(request):
+    preferences, created = PrivacyPreferences.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        preferences.share_profile_info = request.POST.get('share_profile_info') == 'on'
+        preferences.share_activity_with_friends = request.POST.get('share_activity_with_friends') == 'on'
+        preferences.data_usage_consent = request.POST.get('data_usage_consent') == 'on'
+        preferences.save()
+        return redirect('privacy_preferences')
+
+    return render(request, 'privacy_preferences.html', {'preferences': preferences})
+
+# Security Settings
+@login_required
+def security_settings(request):
+    settings, created = UserSecuritySettings.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        settings.two_factor_enabled = request.POST.get('two_factor_enabled') == 'on'
+        settings.email_notifications_enabled = request.POST.get('email_notifications_enabled') == 'on'
+        settings.password_changed_at = timezone.now()
+        settings.save()
+
+        # Send an email notification if email notifications are enabled
+        if settings.email_notifications_enabled:
+            send_security_email(request.user)
+
+        return redirect('security_settings')
+
+    return render(request, 'security_settings.html', {'settings': settings})

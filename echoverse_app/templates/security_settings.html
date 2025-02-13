@@ -1,0 +1,10 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="two_factor_enabled">Enable Two-Factor Authentication:</label>
+    <input type="checkbox" name="two_factor_enabled" {% if settings.two_factor_enabled %}checked{% endif %}>
+    
+    <label for="email_notifications_enabled">Enable Email Notifications:</label>
+    <input type="checkbox" name="email_notifications_enabled" {% if settings.email_notifications_enabled %}checked{% endif %}>
+
+    <button type="submit">Save Settings</button>
+</form>
