@@ -169,3 +169,22 @@ class Footer(models.Model):
 
     def __str__(self):
         return "Footer Content"
+
+class UserSecuritySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    two_factor_enabled = models.BooleanField(default=False)
+    email_notifications_enabled = models.BooleanField(default=True)
+    password_changed_at = models.DateTimeField(null=True, blank=True)
+    last_login_ip = models.GenericIPAddressField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Security settings for {self.user.username}"
+
+class PrivacyPreferences(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    share_profile_info = models.BooleanField(default=True)
+    share_activity_with_friends = models.BooleanField(default=True)
+    data_usage_consent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Privacy preferences for {self.user.username}"

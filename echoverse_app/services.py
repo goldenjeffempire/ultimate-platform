@@ -68,6 +68,14 @@ def send_email_campaign(campaign_id):
     campaign.save()
     return True
 
+def send_security_email(user):
+    send_mail(
+        'Security Alert: Changes to Your Account',
+        'Your security settings have been updated. Please review them.',
+        'from@example.com',
+        [user.email],
+    )
+
 def generate_ad_content(product_name, target_audience):
     # Placeholder function to simulate ad content generation.
     return f"Buy {product_name} now and get exclusive offers! Perfect for {target_audience}."

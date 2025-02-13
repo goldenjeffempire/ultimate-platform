@@ -1,0 +1,13 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="share_profile_info">Share Profile Information:</label>
+    <input type="checkbox" name="share_profile_info" {% if preferences.share_profile_info %}checked{% endif %}>
+    
+    <label for="share_activity_with_friends">Share Activity with Friends:</label>
+    <input type="checkbox" name="share_activity_with_friends" {% if preferences.share_activity_with_friends %}checked{% endif %}>
+    
+    <label for="data_usage_consent">Consent to Data Usage:</label>
+    <input type="checkbox" name="data_usage_consent" {% if preferences.data_usage_consent %}checked{% endif %}>
+
+    <button type="submit">Save Preferences</button>
+</form>
