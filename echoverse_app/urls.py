@@ -23,4 +23,6 @@ urlpatterns = [
     path('footer/', views.footer, name='footer'),
     path('security-settings/', views.security_settings, name='security_settings'),
     path('privacy-preferences/', views.privacy_preferences, name='privacy_preferences'),
+    path('submit-feedback/', views.submit_feedback, name='submit_feedback'),
+    path('submit-review/<int:product_id>/', views.submit_product_review, name='submit_product_review'),
 ]

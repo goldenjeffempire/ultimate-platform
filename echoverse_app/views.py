@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+from .forms import FeedbackForm, ProductReviewForm
 
 # AI Design Design
 def ai_design(request, industry):
@@ -180,3 +180,41 @@ def security_settings(request):
         return redirect('security_settings')
 
     return render(request, 'security_settings.html', {'settings': settings})
+
+# Submit Feedback
+def submit_feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.save()
+            return redirect('feedback_success')
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'submit_feedback.html', {'form': form})
+
+# Submit Product Review
+def submit_product_review(request, product_id):
+    product = Product.objects.get(id=product_id)
+
+    if request.method == 'POST':
+        form = ProductReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.product = product
+            review.save()
+            return redirect('product_detail', product_id=product.id)  # Assuming product_detail view exists
+    else:
+        form = ProductReviewForm()
+
+    return render(request, 'submit_product_review.html', {'form': form, 'product': product})
+
+# Product Details
+def product_detail(request, product_id):
+    product = Product.objects.get(id=product_id)
+    reviews = ProductReview.objects.filter(product=product)
+    return render(request, 'product_detail.html', {'product': product, 'reviews': reviews})
+
