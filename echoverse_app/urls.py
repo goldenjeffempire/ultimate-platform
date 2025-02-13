@@ -5,4 +5,7 @@ urlpatterns = [
     path('ai-design/<str:industry>/', views.ai_design, name='ai_design'),
     path('add-section/<int:page_id>/<str:section_name>/<str:content>/', views.add_section, name='add_section'),
     path('get-page-sections/<int:page_id>/', views.get_page_sections, name='get_page_sections'),
+    path('ai-content/<str:title>/', views.ai_content, name='ai_content'),
+    path('add-collaborator/<int:post_id>/<int:user_id>/<str:role>/', views.add_collaborator, name='add_collaborator'),
+    path('seo-meta/<int:post_id>/', views.seo_meta, name='seo_meta'),
 ]
