@@ -211,20 +211,24 @@ class Feedback(models.Model):
     def __str__(self):
         if self.product:
             return f"Feedback from {self.user.username} on {self.product.name}"
-        elif self.service:
-            return f"Feedback from {self.user.username} on service {self.service}"
-        else:
-            return f"Feedback from {self.user.username}"
 
 class ProductReview(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_reviews')
     rating = models.PositiveIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
-    review_text = models.TextField()
+    comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Review for {self.product.name} by {self.user.username}"
+
+class GeneralFeedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='general_feedback')
+    feedback_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback by {self.user.username}"
 
 class SecuritySettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

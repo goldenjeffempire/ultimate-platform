@@ -11,7 +11,11 @@ class FeedbackForm(forms.ModelForm):
 class ProductReviewForm(forms.ModelForm):
     class Meta:
         model = ProductReview
-        fields = ['rating', 'review_text']
+        fields = ['rating', 'comment']
+
+# General Feedback Form
+class GeneralFeedbackForm(forms.Form):
+    feedback_text = forms.CharField(widget=forms.Textarea, required=True)
 
 # Product Form
 class ProductForm(forms.ModelForm):

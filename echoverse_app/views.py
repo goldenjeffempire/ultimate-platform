@@ -205,7 +205,7 @@ def submit_product_review(request, product_id):
         form = ProductReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
-            review.user = request.user
+            review.user = user
             review.product = product
             review.save()
             return redirect('product_detail', product_id=product.id)
@@ -213,6 +213,16 @@ def submit_product_review(request, product_id):
         form = ProductReviewForm()
 
     return render(request, 'submit_product_review.html', {'form': form, 'product': product})
+
+# Submit General Feedback
+def submit_general_feedback(request):
+    if request.method == 'POST':
+        feedback_text = request.POST.get('feedback_text')
+        if feedback_text:
+            feedback = GeneralFeedback(user=request.user, feedback_text=feedback_text)
+            feedback.save()
+            return redirect('feedback_success')
+    return render(request, 'submit_feedback.html')
 
 # Product Details
 def product_detail(request, product_id):
