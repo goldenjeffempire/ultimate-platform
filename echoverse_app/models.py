@@ -308,3 +308,12 @@ class UserPrivacySettings(models.Model):
 
     def __str__(self):
         return f"Privacy settings for {self.user.username}"
+
+class AIGeneratedContent(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    generated_at = models.DateTimeField(auto_now_add=True)
+    content_type = models.CharField(max_length=50)  # e.g., 'Blog Post', 'Product Description'
+
+    def __str__(self):
+        return self.title

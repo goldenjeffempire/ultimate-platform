@@ -1,11 +1,13 @@
+import openai
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.conf import settings
 
 
 # AI Design Design
@@ -376,3 +378,32 @@ def privacy_settings(request):
         form = PrivacySettingsForm(instance=privacy_settings)
 
     return render(request, 'privacy_settings.html', {'form': form})
+
+# Generate AI Content
+@login_required
+def generate_ai_content(request):
+    if request.method == 'POST':
+        content_type = request.POST.get('content_type', 'Blog Post')
+        prompt = request.POST.get('prompt', '')
+
+        # Call the AI service to generate content
+        try:
+            response = openai.Completion.create(
+                engine="text-davinci-003",  # Example engine (change if needed)
+                prompt=prompt,
+                max_tokens=500
+            )
+            ai_content = response.choices[0].text.strip()
+
+            # Store the generated content in the database
+            new_content = AIGeneratedContent.objects.create(
+                title=f"{content_type} for {prompt[:30]}...",
+                content=ai_content,
+                content_type=content_type
+            )
+
+            return render(request, 'generated_content.html', {'content': new_content})
+        except Exception as e:
+            return render(request, 'generate_ai_content.html', {'error': str(e)})
+
+    return render(request, 'generate_ai_content.html')
