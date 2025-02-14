@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 .env
+echoverse/settings.py
+.env
