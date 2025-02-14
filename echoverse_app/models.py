@@ -220,3 +220,17 @@ class ProductReview(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.product.name}"
+
+class SecuritySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    two_factor_auth_enabled = models.BooleanField(default=False)
+    email_notifications_enabled = models.BooleanField(default=True)
+    profile_visibility = models.CharField(
+        max_length=10,
+        choices=[('public', 'Public'), ('private', 'Private')],
+        default='public'
+    )
+    data_sharing_consent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Security settings for {self.user.username}"

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product
+from .models import Feedback, ProductReview, Product, SecuritySettings
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -18,3 +18,9 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'description', 'price', 'stock']
+
+# Security Settings Form
+class SecuritySettingsForm(forms.ModelForm):
+    class Meta:
+        model = SecuritySettings
+        fields = ['two_factor_auth_enabled', 'email_notifications_enabled', 'profile_visibility', 'data_sharing_consent']
