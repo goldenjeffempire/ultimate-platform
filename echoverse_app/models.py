@@ -379,3 +379,14 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment for Order #{self.order.id} - Status: {self.payment_status}"
+
+class AbandonedCart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    abandoned_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Cart for {self.user.username} - {self.product.name}"

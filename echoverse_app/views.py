@@ -3,8 +3,9 @@ import stripe
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -546,3 +547,37 @@ def payment_failure(request, payment_id):
     payment.save()
 
     return render(request, 'payment_failure.html', {'payment': payment})
+
+# Track Abandoned Cart
+def track_abandoned_cart(request, product_id):
+    if request.user.is_authenticated:
+        abandoned_cart, created = AbandonedCart.objects.get_or_create(
+            user=request.user, product_id=product_id
+        )
+        abandoned_cart.updated_at = timezone.now()
+        abandoned_cart.save()
+
+    return redirect('cart_view')  # Redirect to the cart view page
+
+# Check Abandoned Cart
+def check_abandoned_carts():
+    # Find carts abandoned for more than 24 hours
+    cutoff_time = timezone.now() - timedelta(hours=24)
+    abandoned_carts = AbandonedCart.objects.filter(abandoned_at__lte=cutoff_time)
+
+    for cart in abandoned_carts:
+        send_abandoned_cart_email(cart.user, cart)
+        cart.delete()
+
+# Send Anandoned Cart Email
+def send_abandoned_cart_email(user, cart):
+    subject = "You left something behind!"
+    message = f"Hello {user.username},\n\nIt looks like you left {cart.product.name} in your cart. Complete your purchase now!"
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+
+# Cart View
+@login_required
+def cart_view(request):
+    carts = AbandonedCart.objects.filter(user=request.user)
+    return render(request, 'cart_view.html', {'carts': carts})
+
