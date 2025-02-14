@@ -37,4 +37,5 @@ urlpatterns = [
     path('generate-ai-content/', views.generate_ai_content, name='generate_ai_content'),
     path('create-storefront/', views.create_storefront, name='create_storefront'),
     path('storefront/<int:storefront_id>/', views.view_storefront, name='view_storefront'),
+    path('generate-ai-product-description/<int:product_id>/', views.generate_ai_product_description, name='generate_ai_product_description'),
 ]

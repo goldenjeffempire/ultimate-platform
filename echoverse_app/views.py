@@ -2,7 +2,7 @@ import openai
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm
@@ -430,3 +430,41 @@ def view_storefront(request, storefront_id):
     products = MarketplaceProduct.objects.filter(storefront=storefront)
 
     return render(request, 'view_storefront.html', {'storefront': storefront, 'products': products})
+
+# Generate AI Product Description
+@login_required
+def generate_ai_product_description(request, product_id):
+    product = MarketplaceProduct.objects.get(id=product_id, created_by=request.user)
+
+    if request.method == 'POST':
+        # Call AI to generate product description and pricing suggestion
+        prompt = f"Generate a detailed description for a product named {product.name}."
+        try:
+            # AI description generation
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=300
+            )
+            description = response.choices[0].text.strip()
+
+            # AI price suggestion based on product type
+            price_response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=f"Suggest a price for a product named {product.name}.",
+                max_tokens=50
+            )
+            price_suggestion = float(price_response.choices[0].text.strip().replace('$', '').replace(',', ''))
+
+            # Save the generated data
+            ai_description = AIProductDescription.objects.create(
+                product=product,
+                description=description,
+                price_suggestion=price_suggestion
+            )
+
+            return render(request, 'generated_product_description.html', {'product': product, 'ai_description': ai_description})
+        except Exception as e:
+            return render(request, 'generate_ai_product_description.html', {'error': str(e)})
+
+    return render(request, 'generate_ai_product_description.html', {'product': product})

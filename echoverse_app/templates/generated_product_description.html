@@ -1,0 +1,7 @@
+<h1>Generated Product Description for {{ product.name }}</h1>
+<h2>Description</h2>
+<p>{{ ai_description.description }}</p>
+<h2>Suggested Price</h2>
+<p>${{ ai_description.price_suggestion }}</p>
+
+<a href="{% url 'generate_ai_product_description' product_id=product.id %}">Generate New Description & Price</a>

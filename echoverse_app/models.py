@@ -336,3 +336,11 @@ class Storefront(models.Model):
     def __str__(self):
         return f"Storefront: {self.name} ({self.channels})"
 
+class AIProductDescription(models.Model):
+    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE, related_name='ai_descriptions')
+    description = models.TextField()
+    price_suggestion = models.DecimalField(max_digits=10, decimal_places=2)
+    generated_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Description for {self.product.name}"
