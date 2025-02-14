@@ -1,0 +1,22 @@
+<h1>Manage Inventory</h1>
+<form method="POST">
+    {% csrf_token %}
+    <label for="product">Product:</label>
+    <select name="product_id">
+        {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+    </select>
+    
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" min="0" required>
+
+    <button type="submit">Update Inventory</button>
+</form>
+
+<h2>Current Inventory</h2>
+<ul>
+    {% for inventory in inventories %}
+        <li>{{ inventory.product.name }}: {{ inventory.quantity }} in stock</li>
+    {% endfor %}
+</ul>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -52,3 +52,10 @@ class StorefrontForm(forms.ModelForm):
     class Meta:
         model = Storefront
         fields = ['name', 'description', 'channels']
+
+# Inventory Form
+class InventoryForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ['quantity']
+

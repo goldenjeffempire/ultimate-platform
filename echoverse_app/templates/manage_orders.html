@@ -1,0 +1,9 @@
+<h1>Your Orders</h1>
+<ul>
+    {% for order in orders %}
+        <li>
+            Order #{{ order.id }}: {{ order.product.name }} - Quantity: {{ order.quantity }} - 
+            Total: ${{ order.total_price }} - Status: {{ order.get_status_display }}
+        </li>
+    {% endfor %}
+</ul>

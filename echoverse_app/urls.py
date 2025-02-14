@@ -38,4 +38,6 @@ urlpatterns = [
     path('create-storefront/', views.create_storefront, name='create_storefront'),
     path('storefront/<int:storefront_id>/', views.view_storefront, name='view_storefront'),
     path('generate-ai-product-description/<int:product_id>/', views.generate_ai_product_description, name='generate_ai_product_description'),
+    path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
+    path('manage-orders/', views.manage_orders, name='manage_orders'),
 ]

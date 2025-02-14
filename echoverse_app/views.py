@@ -2,10 +2,10 @@ import openai
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
 
@@ -468,3 +468,24 @@ def generate_ai_product_description(request, product_id):
             return render(request, 'generate_ai_product_description.html', {'error': str(e)})
 
     return render(request, 'generate_ai_product_description.html', {'product': product})
+
+# Manage Inventory
+@login_required
+def manage_inventory(request):
+    products = MarketplaceProduct.objects.filter(created_by=request.user)
+    inventories = Inventory.objects.filter(product__in=products)
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        quantity = int(request.POST.get('quantity'))
+        inventory, created = Inventory.objects.get_or_create(product_id=product_id)
+        inventory.quantity = quantity
+        inventory.save()
+        return redirect('manage_inventory')
+
+    return render(request, 'manage_inventory.html', {'inventories': inventories, 'products': products})
+
+# Manage Orders
+@login_required
+def manage_orders(request):
+    orders = Order.objects.filter(customer=request.user)
+    return render(request, 'manage_orders.html', {'orders': orders})
