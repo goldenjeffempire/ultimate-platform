@@ -5,7 +5,7 @@ from .models import Feedback, ProductReview, Product, SecuritySettings
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
-        fields = ['product', 'service', 'rating', 'feedback_text']
+        fields = ['product', 'service', 'rating', 'feedback_message']
 
 # Product Review Form
 class ProductReviewForm(forms.ModelForm):

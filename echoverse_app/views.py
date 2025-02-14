@@ -191,7 +191,7 @@ def submit_feedback(request):
             feedback = form.save(commit=False)
             feedback.user = request.user
             feedback.save()
-            return redirect('feedback_success')
+            return redirect('feedback_thank_you')
     else:
         form = FeedbackForm()
 
@@ -199,7 +199,7 @@ def submit_feedback(request):
 
 # Submit Product Review
 def submit_product_review(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
 
     if request.method == 'POST':
         form = ProductReviewForm(request.POST)
@@ -208,7 +208,7 @@ def submit_product_review(request, product_id):
             review.user = request.user
             review.product = product
             review.save()
-            return redirect('product_detail', product_id=product.id)  # Assuming product_detail view exists
+            return redirect('product_detail', product_id=product.id)
     else:
         form = ProductReviewForm()
 
