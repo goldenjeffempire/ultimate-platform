@@ -112,8 +112,23 @@ def home(request):
 # User Dashboard
 @login_required
 def user_dashboard(request):
-    dashboard = UserDashboard.objects.get(user=request.user)
-    return render(request, 'dashboard.html', {'dashboard': dashboard})
+    user = request.user
+
+    # Get user dashboard
+    dashboard = UserDashboard.objects.get(user=user)
+
+    # Get user marketplace products
+    products = MarketplaceProduct.objects.filter(created_by=user)
+
+    # Get user's privacy settings
+    privacy_settings = UserPrivacySettings.objects.get(user=user)
+
+    context = {
+        'dashboard': dashboard,
+        'products': products,
+        'privacy_settings': privacy_settings,
+    }
+    return render(request, 'user_dashboard.html', context)
 
 # Contact
 def contact(request):

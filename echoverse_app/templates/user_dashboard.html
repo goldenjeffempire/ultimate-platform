@@ -1,0 +1,19 @@
+<h1>Welcome, {{ user.username }}</h1>
+
+<h2>Your Marketplace Products</h2>
+<ul>
+    {% for product in products %}
+        <li>{{ product.name }} - ${{ product.price }} (Stock: {{ product.stock_quantity }})</li>
+    {% empty %}
+        <li>You have no products listed yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Your Privacy Settings</h2>
+<ul>
+    <li>Profile Shared: {% if privacy_settings.share_profile %} Yes {% else %} No {% endif %}</li>
+    <li>Email Notifications: {% if privacy_settings.email_notifications %} Yes {% else %} No {% endif %}</li>
+    <li>Two-Factor Authentication: {% if privacy_settings.two_factor_auth %} Enabled {% else %} Disabled {% endif %}</li>
+</ul>
+
+<a href="{% url 'privacy_settings' %}">Edit Privacy Settings</a>
