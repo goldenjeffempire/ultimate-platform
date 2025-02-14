@@ -1,6 +1,8 @@
-<h1>Security & Privacy Settings</h1>
+C<h1>Security & Privacy Settings</h1>
 <form method="POST">
     {% csrf_token %}
+    
+    {{ form.as_p }}
     <label for="two_factor_enabled">Enable Two-Factor Authentication:</label>
     <input type="checkbox" name="two_factor_enabled" {% if settings.two_factor_enabled %}checked{% endif %}>
     
