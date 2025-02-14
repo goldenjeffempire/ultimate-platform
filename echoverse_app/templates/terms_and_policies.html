@@ -1,0 +1,9 @@
+<h1>Terms & Policies</h1>
+<ul>
+    {% for term in terms %}
+        <li>
+            <h2>{{ term.title }}</h2>
+            <p>{{ term.content }}</p>
+        </li>
+    {% endfor %}
+</ul>

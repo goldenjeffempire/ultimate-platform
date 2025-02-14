@@ -128,7 +128,7 @@ def contact(request):
 
 # Terms And Policies
 def terms_and_policies(request):
-    terms = TermsAndPolicies.objects.first()
+    terms = TermsAndPolicies.objects.filter(is_active=True)
     return render(request, 'terms_and_policies.html', {'terms': terms})
 
 # Footer
