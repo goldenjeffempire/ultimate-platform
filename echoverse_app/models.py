@@ -317,3 +317,22 @@ class AIGeneratedContent(models.Model):
 
     def __str__(self):
         return self.title
+
+class Storefront(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='storefronts')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Define supported sales channels (e.g., website, mobile app, social media)
+    CHANNEL_CHOICES = [
+        ('website', 'Website'),
+        ('mobile', 'Mobile'),
+        ('social_media', 'Social Media'),
+    ]
+    channels = models.CharField(max_length=50, choices=CHANNEL_CHOICES)
+
+    def __str__(self):
+        return f"Storefront: {self.name} ({self.channels})"
+

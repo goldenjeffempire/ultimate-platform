@@ -35,4 +35,6 @@ urlpatterns = [
     path('two-factor-authentication/', views.enable_two_factor_authentication, name='two_factor_settings'),
     path('privacy-settings/', views.privacy_settings, name='privacy_settings'),
     path('generate-ai-content/', views.generate_ai_content, name='generate_ai_content'),
+    path('create-storefront/', views.create_storefront, name='create_storefront'),
+    path('storefront/<int:storefront_id>/', views.view_storefront, name='view_storefront'),
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -46,3 +46,9 @@ class TwoFactorAuthenticationForm(forms.ModelForm):
     class Meta:
         model = TwoFactorAuthentication
         fields = ['is_enabled']
+
+# Storefront Form
+class StorefrontForm(forms.ModelForm):
+    class Meta:
+        model = Storefront
+        fields = ['name', 'description', 'channels']

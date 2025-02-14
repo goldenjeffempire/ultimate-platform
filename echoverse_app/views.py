@@ -2,10 +2,10 @@ import openai
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
 
@@ -407,3 +407,26 @@ def generate_ai_content(request):
             return render(request, 'generate_ai_content.html', {'error': str(e)})
 
     return render(request, 'generate_ai_content.html')
+
+# Create Storefront
+@login_required
+def create_storefront(request):
+    if request.method == 'POST':
+        form = StorefrontForm(request.POST)
+        if form.is_valid():
+            storefront = form.save(commit=False)
+            storefront.owner = request.user
+            storefront.save()
+            return redirect('view_storefront', storefront_id=storefront.id)
+    else:
+        form = StorefrontForm()
+
+    return render(request, 'create_storefront.html', {'form': form})
+
+# View Storefront
+@login_required
+def view_storefront(request, storefront_id):
+    storefront = Storefront.objects.get(id=storefront_id, owner=request.user)
+    products = MarketplaceProduct.objects.filter(storefront=storefront)
+
+    return render(request, 'view_storefront.html', {'storefront': storefront, 'products': products})

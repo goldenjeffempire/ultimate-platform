@@ -1,0 +1,13 @@
+<h1>{{ storefront.name }}</h1>
+<p>{{ storefront.description }}</p>
+
+<h2>Products in this Storefront</h2>
+<ul>
+    {% for product in products %}
+        <li>{{ product.name }} - ${{ product.price }}</li>
+    {% empty %}
+        <li>No products listed in this storefront yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'create_storefront' %}">Create a new storefront</a>
