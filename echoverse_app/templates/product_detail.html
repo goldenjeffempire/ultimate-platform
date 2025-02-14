@@ -1,26 +1,33 @@
 <h1>{{ product.name }}</h1>
+<img src="{{ product.image.url }}" alt="{{ product.name }}">
 <p>{{ product.description }}</p>
 <p>Price: ${{ product.price }}</p>
 <p>Stock: {{ product.stock }}</p>
 
-<!-- Assuming logged-in users can add the product to cart -->
+<!-- Purchase Options -->
 {% if user.is_authenticated %}
+    <form method="POST" action="{% url 'buy_product' product.id %}">
+        {% csrf_token %}
+        <button type="submit">Buy Now</button>
+    </form>
     <button>Add to Cart</button>  <!-- Placeholder for Add to Cart functionality -->
 {% else %}
     <p>Please log in to purchase this product.</p>
 {% endif %}
 
-<h2>{{ product.name }}</h2>
-<p>{{ product.description }}</p>
-
+<!-- Reviews Section -->
 <h3>Reviews:</h3>
-<ul>
-    {% for review in reviews %}
-        <li>
-            <strong>{{ review.user.username }}:</strong>
-            <p>Rating: {{ review.rating }} - {{ review.review_text }}</p>
-        </li>
-    {% endfor %}
-</ul>
+{% if reviews %}
+    <ul>
+        {% for review in reviews %}
+            <li>
+                <strong>{{ review.user.username }}:</strong>
+                <p>Rating: {{ review.rating }} - {{ review.review_text }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No reviews yet.</p>
+{% endif %}
 
 <a href="{% url 'submit_product_review' product.id %}">Write a review</a>

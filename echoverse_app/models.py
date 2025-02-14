@@ -239,3 +239,31 @@ class SecuritySettings(models.Model):
 
     def __str__(self):
         return f"Security settings for {self.user.username}"
+
+class MarketplaceProduct(models.Model):
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='marketplace_products')
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField(default=1)
+    image = models.ImageField(upload_to='marketplace_products/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} by {self.seller.username}"
+
+class MarketplaceTransaction(models.Model):
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
+    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed'), ('cancelled', 'Cancelled')],
+        default='pending'
+    )
+
+    def __str__(self):
+        return f"Transaction for {self.product.name} by {self.buyer.username}"

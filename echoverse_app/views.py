@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm
@@ -216,14 +216,21 @@ def submit_product_review(request, product_id):
 
 # Product Details
 def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    reviews = ProductReview.objects.filter(product=product)
-    return render(request, 'product_detail.html', {'product': product, 'reviews': reviews})
+    # Try to get the product from both Product and MarketplaceProduct models
+    try:
+        product = get_object_or_404(Product, id=product_id)
+        reviews = ProductReview.objects.filter(product=product)
+        return render(request, 'product_detail.html', {'product': product, 'reviews': reviews})
+    except Product.DoesNotExist:
+        product = get_object_or_404(MarketplaceProduct, id=product_id, is_active=True)
+        return render(request, 'product_detail.html', {'product': product})
 
 # MarketPlace
 def marketplace(request):
     products = Product.objects.filter(productlisting__active=True)  # Filter active listings only
-    return render(request, 'marketplace.html', {'products': products})
+    marketplace_products = MarketplaceProduct.objects.filter(is_active=True)
+
+    return render(request, 'marketplace.html', {'products': products, 'marketplace_products': marketplace_products})
 
 # List Product
 @login_required
@@ -240,6 +247,25 @@ def list_product(request):
         form = ProductForm()
 
     return render(request, 'list_product.html', {'form': form})
+
+# Buy Product
+@login_required
+def buy_product(request, product_id):
+    product = get_object_or_404(MarketplaceProduct, id=product_id, is_active=True)
+
+    if product.stock > 0:
+        transaction = MarketplaceTransaction.objects.create(
+            buyer=request.user,
+            product=product,
+            quantity=1,
+            total_price=product.price,
+            status='pending'
+        )
+        product.stock -= 1
+        product.save()
+        return render(request, 'purchase_success.html', {'transaction': transaction})
+    else:
+        return render(request, 'purchase_failed.html', {'product': product})
 
 # Security Settings
 @login_required
