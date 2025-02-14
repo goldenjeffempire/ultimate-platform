@@ -1,0 +1,9 @@
+<h1>Two-Factor Authentication</h1>
+{% if two_fa.is_enabled %}
+    <p>2FA is enabled for your account.</p>
+{% else %}
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Enable 2FA</button>
+    </form>
+{% endif %}

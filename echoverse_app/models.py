@@ -267,3 +267,20 @@ class MarketplaceTransaction(models.Model):
 
     def __str__(self):
         return f"Transaction for {self.product.name} by {self.buyer.username}"
+
+class PrivacySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    share_email = models.BooleanField(default=True)
+    share_phone_number = models.BooleanField(default=True)
+    share_activity_status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Privacy settings for {self.user.username}"
+
+class TwoFactorAuthentication(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_enabled = models.BooleanField(default=False)
+    secret_key = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"2FA for {self.user.username}"

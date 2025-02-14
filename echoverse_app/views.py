@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
@@ -286,3 +286,38 @@ def security_settings(request):
         form = SecuritySettingsForm(instance=settings)
 
     return render(request, 'security_settings.html', {'form': form})
+
+# Privacy Settings
+@login_required
+def update_privacy_settings(request):
+    try:
+        privacy_settings = PrivacySettings.objects.get(user=request.user)
+    except PrivacySettings.DoesNotExist:
+        privacy_settings = PrivacySettings(user=request.user)
+    
+    if request.method == 'POST':
+        form = PrivacySettingsForm(request.POST, instance=privacy_settings)
+        if form.is_valid():
+            form.save()
+            return redirect('privacy_settings')
+    else:
+        form = PrivacySettingsForm(instance=privacy_settings)
+
+    return render(request, 'privacy_settings.html', {'form': form})
+
+# Two Factor Authentication
+@login_required
+def enable_two_factor_authentication(request):
+    try:
+        two_fa = TwoFactorAuthentication.objects.get(user=request.user)
+    except TwoFactorAuthentication.DoesNotExist:
+        two_fa = TwoFactorAuthentication(user=request.user)
+
+    if request.method == 'POST':
+        if not two_fa.is_enabled:
+            two_fa.is_enabled = True
+            two_fa.save()
+            # Implement the logic for generating a secret key for 2FA here
+        return redirect('two_factor_settings')
+
+    return render(request, 'two_factor_settings.html', {'two_fa': two_fa})
