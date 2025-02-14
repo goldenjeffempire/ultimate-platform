@@ -1,0 +1,14 @@
+<h1>Complete Payment for Order #{{ order.id }}</h1>
+<form action="https://js.stripe.com/v3/checkout.js" method="POST">
+    <script
+        src="https://checkout.stripe.com/checkout.js"
+        class="stripe-button"
+        data-key="{{ STRIPE_TEST_PUBLIC_KEY }}"
+        data-amount="{{ order.total_price|floatformat:2|mul:100 }}"
+        data-name="Echoverse"
+        data-description="Order #{{ order.id }}"
+        data-currency="usd"
+        data-email="{{ user.email }}"
+        data-payment-intent-client-secret="{{ client_secret }}">
+    </script>
+</form>

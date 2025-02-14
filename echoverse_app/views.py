@@ -1,14 +1,17 @@
 import openai
+import stripe
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
 
+
+stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 # AI Design Design
 def ai_design(request, industry):
@@ -489,3 +492,57 @@ def manage_inventory(request):
 def manage_orders(request):
     orders = Order.objects.filter(customer=request.user)
     return render(request, 'manage_orders.html', {'orders': orders})
+
+# Checkout
+@login_required
+def checkout(request, order_id):
+    order = Order.objects.get(id=order_id, customer=request.user)
+
+    if request.method == 'POST':
+        try:
+            # Create a Stripe Payment Intent
+            intent = stripe.PaymentIntent.create(
+                amount=int(order.total_price * 100),  # Amount in cents
+                currency='usd',
+                metadata={'order_id': order.id}
+            )
+
+            payment = Payment.objects.create(
+                order=order,
+                payment_method='stripe',
+                amount=order.total_price,
+                payment_id=intent['id'],
+                payment_status='pending'
+            )
+
+            # Pass the client secret to the frontend to complete the payment
+            return render(request, 'payment_page.html', {
+                'client_secret': intent['client_secret'],
+                'order': order
+            })
+        except stripe.error.StripeError as e:
+            return render(request, 'checkout_error.html', {'error': str(e)})
+
+    return render(request, 'checkout.html', {'order': order})
+
+# Payment Success
+@login_required
+def payment_success(request, payment_id):
+    payment = Payment.objects.get(id=payment_id)
+    payment.payment_status = 'completed'
+    payment.save()
+
+    order = payment.order
+    order.status = 'shipped'  # Update order status to shipped after successful payment
+    order.save()
+
+    return render(request, 'payment_success.html', {'payment': payment})
+
+# Payment Failure
+@login_required
+def payment_failure(request, payment_id):
+    payment = Payment.objects.get(id=payment_id)
+    payment.payment_status = 'failed'
+    payment.save()
+
+    return render(request, 'payment_failure.html', {'payment': payment})

@@ -363,3 +363,19 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"Inventory for {self.product.name} - {self.quantity} in stock"
+
+class Payment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    payment_method = models.CharField(max_length=50)
+    payment_status_choices = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    payment_status = models.CharField(max_length=10, choices=payment_status_choices, default='pending')
+    payment_id = models.CharField(max_length=255, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment for Order #{self.order.id} - Status: {self.payment_status}"

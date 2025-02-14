@@ -1,0 +1,6 @@
+<h1>Checkout for Order #{{ order.id }}</h1>
+<p>Total: ${{ order.total_price }}</p>
+<form action="{% url 'checkout' order_id=order.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Proceed to Payment</button>
+</form>
