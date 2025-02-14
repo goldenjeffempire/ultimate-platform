@@ -244,12 +244,20 @@ class SecuritySettings(models.Model):
     def __str__(self):
         return f"Security settings for {self.user.username}"
 
+class ProductCategory(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 class MarketplaceProduct(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='marketplace_products')
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField(default=1)
+    stock_quantity = models.PositiveIntegerField(default=1)
+    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, default=1)
     image = models.ImageField(upload_to='marketplace_products/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

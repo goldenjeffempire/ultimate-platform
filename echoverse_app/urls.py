@@ -26,6 +26,7 @@ urlpatterns = [
     path('submit-feedback/', views.submit_general_feedback, name='submit_feedback'),
     path('product/<int:product_id>/submit_review', views.submit_product_review, name='submit_product_review'),
     path('marketplace/', views.marketplace, name='marketplace'),
+    path('create-product/', views.create_product, name='create_product'),
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('buy/<int:product_id>/', views.buy_product, name='buy_product'),
     path('list-product/', views.list_product, name='list_product'),

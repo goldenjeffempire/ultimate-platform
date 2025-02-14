@@ -4,7 +4,7 @@ from .services import generate_ai_design, generate_ai_content, generate_seo_meta
 from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
@@ -235,10 +235,25 @@ def product_detail(request, product_id):
         product = get_object_or_404(MarketplaceProduct, id=product_id, is_active=True)
         return render(request, 'product_detail.html', {'product': product})
 
+# Create Product
+@login_required
+def create_product(request):
+    if request.method == 'POST':
+        form = MarketplaceProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.save()
+            return redirect('product_detail', product_id=product.id)
+    else:
+        form = MarketplaceProductForm()
+    return render(request, 'create_product.html', {'form': form})
+
 # MarketPlace
 def marketplace(request):
     products = Product.objects.filter(productlisting__active=True)  # Filter active listings only
     marketplace_products = MarketplaceProduct.objects.filter(is_active=True)
+
+    template = 'marketplace_home.html' if 'home' in request.path else 'marketplace.html'
 
     return render(request, 'marketplace.html', {'products': products, 'marketplace_products': marketplace_products})
 
@@ -304,7 +319,7 @@ def update_privacy_settings(request):
         privacy_settings = PrivacySettings.objects.get(user=request.user)
     except PrivacySettings.DoesNotExist:
         privacy_settings = PrivacySettings(user=request.user)
-    
+
     if request.method == 'POST':
         form = PrivacySettingsForm(request.POST, instance=privacy_settings)
         if form.is_valid():

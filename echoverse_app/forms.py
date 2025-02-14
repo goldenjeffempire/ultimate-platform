@@ -27,7 +27,7 @@ class ProductForm(forms.ModelForm):
 class MarketplaceProductForm(forms.ModelForm):
     class Meta:
         model = MarketplaceProduct
-        fields = ['name', 'description', 'price', 'stock', 'image']
+        fields = ['name', 'description', 'price', 'category', 'image', 'stock_quantity']
 
 # Security Settings Form
 class SecuritySettingsForm(forms.ModelForm):
