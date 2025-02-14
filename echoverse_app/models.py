@@ -296,3 +296,12 @@ class TwoFactorAuthentication(models.Model):
 
     def __str__(self):
         return f"2FA for {self.user.username}"
+
+class UserPrivacySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='privacy_settings')
+    share_profile = models.BooleanField(default=True)
+    email_notifications = models.BooleanField(default=True)
+    two_factor_auth = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Privacy settings for {self.user.username}"

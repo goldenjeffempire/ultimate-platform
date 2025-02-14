@@ -33,4 +33,5 @@ urlpatterns = [
     path('security-settings/', views.security_settings, name='security_settings'),
     path('privacy-settings/', views.update_privacy_settings, name='privacy_settings'),
     path('two-factor-authentication/', views.enable_two_factor_authentication, name='two_factor_settings'),
+    path('privacy-settings/', views.privacy_settings, name='privacy_settings'),
 ]

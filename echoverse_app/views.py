@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm
@@ -346,3 +346,18 @@ def enable_two_factor_authentication(request):
         return redirect('two_factor_settings')
 
     return render(request, 'two_factor_settings.html', {'two_fa': two_fa})
+
+# Privacy Settings
+@login_required
+def privacy_settings(request):
+    privacy_settings, created = UserPrivacySettings.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = PrivacySettingsForm(request.POST, instance=privacy_settings)
+        if form.is_valid():
+            form.save()
+            return redirect('privacy_settings')
+    else:
+        form = PrivacySettingsForm(instance=privacy_settings)
+
+    return render(request, 'privacy_settings.html', {'form': form})

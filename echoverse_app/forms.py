@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -38,8 +38,8 @@ class SecuritySettingsForm(forms.ModelForm):
 # Privacy Settings Form
 class PrivacySettingsForm(forms.ModelForm):
     class Meta:
-        model = PrivacySettings
-        fields = ['share_email', 'share_phone_number', 'share_activity_status']
+        model = UserPrivacySettings
+        fields = ['share_email', 'share_phone_number', 'share_activity_status', 'share_profile', 'email_notifications', 'two_factor_auth']
 
 # Two Factor Authentication Form
 class TwoFactorAuthenticationForm(forms.ModelForm):
