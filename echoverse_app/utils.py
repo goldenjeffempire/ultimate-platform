@@ -42,3 +42,16 @@ def generate_funnel_recommendations(user_behavior, funnel_stage):
     )
 
     return response.choices[0].text.strip()
+
+# Generate ChatBot Response
+def generate_chatbot_response(user_message, chat_history):
+    prompt = f"The following is a conversation between a user and a helpful AI chatbot.\n{chat_history}\nUser: {user_message}\nChatbot:"
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # or use the most suitable GPT model
+        prompt=prompt,
+        max_tokens=150,
+        temperature=0.7
+    )
+
+    return response.choices[0].text.strip()

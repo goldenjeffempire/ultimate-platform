@@ -4,14 +4,14 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
-from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations
+from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations, generate_chatbot_response
 
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
@@ -665,3 +665,28 @@ def create_ad_campaign(request, product_id):
 def ad_campaign_detail(request, ad_campaign_id):
     ad_campaign = AdCampaign.objects.get(id=ad_campaign_id)
     return render(request, 'ad_campaign_detail.html', {'ad_campaign': ad_campaign})
+
+# Start Chat (Chat Sessions)
+def start_chat(request):
+    chat_session = ChatSession.objects.create(user=request.user)
+    return redirect('chat_session', session_id=chat_session.id)
+
+# Chat Session
+def chat_session(request, session_id):
+    chat_session = ChatSession.objects.get(id=session_id)
+
+    if request.method == "POST":
+        user_message = request.POST['message']
+
+        # Get the current chat history (including the latest user message)
+        chat_history = "\n".join([f"User: {msg['user_message']}\nChatbot: {msg['chatbot_response']}" for msg in chat_session.messages.all()])
+
+        # Generate chatbot response
+        chatbot_response = generate_chatbot_response(user_message, chat_history)
+
+        # Save the conversation
+        chat_session.messages.create(user_message=user_message, chatbot_response=chatbot_response)
+
+        return JsonResponse({'response': chatbot_response})
+
+    return render(request, 'chat_session.html', {'chat_session': chat_session})

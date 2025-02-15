@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+from django.utils.timezone import now
 
 class Website(models.Model):
     name = models.CharField(max_length=255)
@@ -104,7 +104,7 @@ class EmailCampaign(models.Model):
 class SalesFunnel(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    stages = models.JSONField()
+    stages = models.JSONField(default=list)
     conversion_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -406,3 +406,21 @@ class AdCampaign(models.Model):
 
     def __str__(self):
         return f"Ad Campaign for {self.product.name} - {self.status}"
+
+class ChatSession(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=50, choices=[('Active', 'Active'), ('Ended', 'Ended')], default='Active')
+
+    def __str__(self):
+        return f"Chat with {self.user.username} - {self.status}"
+
+class ChatMessage(models.Model):
+    chat_session = models.ForeignKey(ChatSession, related_name='messages', on_delete=models.CASCADE)
+    user_message = models.TextField()
+    chatbot_response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message from {self.chat_session.user.username} - {self.timestamp}"

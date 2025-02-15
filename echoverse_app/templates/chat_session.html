@@ -1,0 +1,31 @@
+<h1>Chat with our Virtual Assistant</h1>
+
+<div id="chat-box">
+    {% for message in chat_session.messages.all %}
+        <p><strong>User:</strong> {{ message.user_message }}</p>
+        <p><strong>Chatbot:</strong> {{ message.chatbot_response }}</p>
+    {% endfor %}
+</div>
+
+<form method="post" id="chat-form">
+    {% csrf_token %}
+    <textarea name="message" placeholder="Ask me anything..." required></textarea>
+    <button type="submit">Send</button>
+</form>
+
+<script>
+    document.getElementById('chat-form').onsubmit = function(event) {
+        event.preventDefault();
+        var message = event.target.message.value;
+        
+        fetch("{% url 'chat_session' session_id=chat_session.id %}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        }).then(response => response.json()).then(data => {
+            var chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p><strong>User:</strong> ${message}</p><p><strong>Chatbot:</strong> ${data.response}</p>`;
+            event.target.message.value = '';
+        });
+    };
+</script>
