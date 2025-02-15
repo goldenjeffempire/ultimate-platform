@@ -103,13 +103,20 @@ class EmailCampaign(models.Model):
 
 class SalesFunnel(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
-    stages = models.JSONField(default=list)
-    conversion_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    description = models.TextField(default="No description provided")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+class FunnelStage(models.Model):
+    funnel = models.ForeignKey(SalesFunnel, related_name="stages", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    order = models.PositiveIntegerField()
+    conversion_rate = models.FloatField(default=0.0)  # Percentage of users moving to next stage
+
+    def __str__(self):
+        return f"{self.name} (Funnel: {self.funnel.name})"
 
 class SocialMediaPost(models.Model):
     content = models.TextField()

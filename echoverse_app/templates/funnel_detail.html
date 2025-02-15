@@ -1,0 +1,11 @@
+<h1>{{ funnel.name }}</h1>
+<p>{{ funnel.description }}</p>
+
+<h2>Stages</h2>
+<ul>
+    {% for stage in stages %}
+        <li>{{ stage.order }}: {{ stage.name }} (Conversion: {{ stage.conversion_rate }}%)</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'add_funnel_stage' funnel.id %}">Add New Stage</a>

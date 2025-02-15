@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -58,4 +58,16 @@ class InventoryForm(forms.ModelForm):
     class Meta:
         model = Inventory
         fields = ['quantity']
+
+# Sales Funnel Form
+class SalesFunnelForm(forms.ModelForm):
+    class Meta:
+        model = SalesFunnel
+        fields = ['name', 'description']
+
+# Funnel Stage Form
+class FunnelStageForm(forms.ModelForm):
+    class Meta:
+        model = FunnelStage
+        fields = ['name', 'order', 'conversion_rate']
 
