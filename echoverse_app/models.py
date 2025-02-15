@@ -91,19 +91,11 @@ class ProductListing(models.Model):
     def __str__(self):
         return f"Listing for {self.product.name}"
 
-class Customer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Customer {self.user.username}"
-
 class EmailCampaign(models.Model):
     name = models.CharField(max_length=255)
     subject = models.CharField(max_length=255)
-    content = models.TextField()
+    body = models.TextField()
+    scheduled_for = models.DateTimeField()
     sent_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
@@ -293,6 +285,18 @@ class MarketplaceTransaction(models.Model):
 
     def __str__(self):
         return f"Transaction for {self.product.name} by {self.buyer.username}"
+
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    purchase_history = models.ManyToManyField(MarketplaceProduct, blank=True)
+    last_contacted = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
 
 class PrivacySettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

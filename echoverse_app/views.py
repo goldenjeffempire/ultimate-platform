@@ -3,14 +3,14 @@ import stripe
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
-
+from .utils import generate_email_content
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
@@ -580,4 +580,34 @@ def send_abandoned_cart_email(user, cart):
 def cart_view(request):
     carts = AbandonedCart.objects.filter(user=request.user)
     return render(request, 'cart_view.html', {'carts': carts})
+
+# Send Email Campaign
+def send_email_campaign(request, campaign_id):
+    campaign = EmailCampaign.objects.get(id=campaign_id)
+
+    # Fetch all customers to send the email
+    customers = Customer.objects.all()
+
+    for customer in customers:
+        # Generate personalized email content using AI
+        email_content = generate_email_content(customer.name, customer.purchase_history.all())
+
+        # Send the email
+        send_mail(
+            subject=campaign.subject,
+            message=email_content,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[customer.email],
+        )
+
+        # Update the campaign sent time
+        campaign.sent_at = timezone.now()
+        campaign.save()
+
+    return redirect('campaign_sent', campaign_id=campaign.id)
+
+# Campaign Sent
+def campaign_sent(request, campaign_id):
+    campaign = EmailCampaign.objects.get(id=campaign_id)
+    return render(request, 'campaign_sent.html', {'campaign': campaign})
 
