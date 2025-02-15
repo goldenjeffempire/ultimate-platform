@@ -1,0 +1,13 @@
+<h1>Your Scheduled Posts</h1>
+<ul>
+    {% for post in posts %}
+        <li>
+            {{ post.content }} ({{ post.platform }}) - Scheduled for: {{ post.scheduled_time }}
+            {% if post.posted %}
+                <span style="color:green;">[Posted]</span>
+            {% else %}
+                <span style="color:red;">[Scheduled]</span>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

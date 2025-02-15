@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage, SocialMediaPost
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -71,3 +71,8 @@ class FunnelStageForm(forms.ModelForm):
         model = FunnelStage
         fields = ['name', 'order', 'conversion_rate']
 
+# Social Media Post Form
+class SocialMediaPostForm(forms.ModelForm):
+    class Meta:
+        model = SocialMediaPost
+        fields = ['content', 'platform', 'scheduled_time']

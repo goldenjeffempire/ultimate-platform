@@ -119,12 +119,22 @@ class FunnelStage(models.Model):
         return f"{self.name} (Funnel: {self.funnel.name})"
 
 class SocialMediaPost(models.Model):
+    PLATFORM_CHOICES = [
+        ('Facebook', 'Facebook'),
+        ('Twitter', 'Twitter'),
+        ('LinkedIn', 'LinkedIn'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     content = models.TextField()
-    scheduled_for = models.DateTimeField()
-    is_published = models.BooleanField(default=False)
+    platform = models.CharField(max_length=50, choices=PLATFORM_CHOICES, default='Facebook')
+    scheduled_time = models.DateTimeField(auto_now_add=True)
+    is_published = models.BooleanField(default=False)  # Unified field name
+    created_at = models.DateTimeField(auto_now_add=True)  # Track creation time
+    updated_at = models.DateTimeField(auto_now=True)  # Track last modification
 
     def __str__(self):
-        return f"Post scheduled for {self.scheduled_for}"
+        return f"{self.platform} Post by {self.user.username if self.user else 'Unknown'}"
 
 class HomePage(models.Model):
     title = models.CharField(max_length=255)
@@ -441,3 +451,4 @@ class Ad(models.Model):
 
     def __str__(self):
         return f"Ad: {self.title}"
+
