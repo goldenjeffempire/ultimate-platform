@@ -394,3 +394,13 @@ class AbandonedCart(models.Model):
 
     def __str__(self):
         return f"Cart for {self.user.username} - {self.product.name}"
+
+class AdCampaign(models.Model):
+    name = models.CharField(max_length=255)
+    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE)
+    ad_copy = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, choices=[('Draft', 'Draft'), ('Active', 'Active'), ('Completed', 'Completed')], default='Draft')
+
+    def __str__(self):
+        return f"Ad Campaign for {self.product.name} - {self.status}"

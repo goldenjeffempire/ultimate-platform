@@ -1,16 +1,16 @@
 import openai
 import stripe
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
-from .utils import generate_email_content
+from .utils import generate_email_content, generate_ad_copy
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
@@ -611,3 +611,24 @@ def campaign_sent(request, campaign_id):
     campaign = EmailCampaign.objects.get(id=campaign_id)
     return render(request, 'campaign_sent.html', {'campaign': campaign})
 
+# Create Ad Campaign
+def create_ad_campaign(request, product_id):
+    product = MarketplaceProduct.objects.get(id=product_id)
+
+    # Generate ad copy using AI
+    ad_copy = generate_ad_copy(product.name, product.description, product.category)
+
+    # Create the ad campaign and save it
+    ad_campaign = AdCampaign.objects.create(
+        name=f"Ad Campaign for {product.name}",
+        product=product,
+        ad_copy=ad_copy,
+        status='Draft'
+    )
+
+    return redirect('ad_campaign_detail', ad_campaign_id=ad_campaign.id)
+
+# Ad Campaign Detail
+def ad_campaign_detail(request, ad_campaign_id):
+    ad_campaign = AdCampaign.objects.get(id=ad_campaign_id)
+    return render(request, 'ad_campaign_detail.html', {'ad_campaign': ad_campaign})
