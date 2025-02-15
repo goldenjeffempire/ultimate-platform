@@ -1,25 +1,38 @@
-<h1>Marketplace</h1>
+{% extends "base.html" %}
 
-<div>
-    {% for product in products %}
-        <div class="product">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-            <h2>{{ product.name }}</h2>
-            <p>{{ product.description }}</p>
-            <p>Price: ${{ product.price }}</p>
-            <p>Stock: {{ product.stock }}</p>
-            <a href="{% url 'product_detail' product.id %}">View Details</a>
-        </div>
-    {% endfor %}
-</div>
+{% block title %}Marketplace {% endblock %}
 
-<hr>
+{% block content %}
+    <h1>Explore the Marketplace</h1>
+    <p>Discover plugins, themes, and AI-powered tools.</p>
 
-<h2>Product List</h2>
-<ul>
-    {% for product in products %}
-        <li><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a> - ${{ product.price }}</li>
-    {% endfor %}
-</ul>
+    <hr>
 
-<a href="{% url 'create_product' %}">Create a new product</a>
+    <div>
+        {% for product in products %}
+            <div class="product">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.description }}</p>
+                <p>Price: ${{ product.price }}</p>
+                <p>Stock: {{ product.stock }}</p>
+                <a href="{% url 'product_detail' product.id %}">View Details</a>
+            </div>
+        {% empty %}
+            <p>No products available.</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <h2>Product List</h2>
+    <ul>
+        {% for product in products %}
+            <li><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a> - ${{ product.price }}</li>
+        {% empty %}
+            <li>No products available.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'create_product' %}">Create a new product</a>
+{% endblock %}

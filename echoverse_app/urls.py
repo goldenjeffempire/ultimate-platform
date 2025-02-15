@@ -24,6 +24,7 @@ urlpatterns = [
     path('security-settings/', views.security_settings, name='security_settings'),
     path('privacy-preferences/', views.privacy_preferences, name='privacy_preferences'),
     path('submit-feedback/', views.submit_general_feedback, name='submit_feedback'),
+    path('feedback/', views.feedback_reviews, name='feedback'),
     path('product/<int:product_id>/submit_review', views.submit_product_review, name='submit_product_review'),
     path('marketplace/', views.marketplace, name='marketplace'),
     path('create-product/', views.create_product, name='create_product'),

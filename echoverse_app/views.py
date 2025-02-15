@@ -278,6 +278,10 @@ def submit_general_feedback(request):
             return redirect('feedback_success')
     return render(request, 'submit_feedback.html')
 
+# Feedback Reviews
+def feedback_reviews(request):
+    return render(request, 'feedback.html')
+
 # Product Details
 def product_detail(request, product_id):
     # Try to get the product from both Product and MarketplaceProduct models
