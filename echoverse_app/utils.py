@@ -1,4 +1,5 @@
 import openai
+import os
 from django.conf import settings
 
 # Set up OpenAI API
@@ -68,3 +69,11 @@ def generate_ad_content(product_name, target_audience, ad_type):
     )
 
     return response.choices[0].text.strip()
+
+# Get AI Response
+def get_ai_response(user_input):
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": user_input}]
+    )
+    return response["choices"][0]["message"]["content"]

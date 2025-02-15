@@ -435,12 +435,12 @@ class ChatSession(models.Model):
 
 class ChatMessage(models.Model):
     chat_session = models.ForeignKey(ChatSession, related_name='messages', on_delete=models.CASCADE)
-    user_message = models.TextField()
-    chatbot_response = models.TextField()
+    sender = models.CharField(max_length=10, choices=[('User', 'User'), ('Bot', 'Bot')], default='User')
+    message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.chat_session.user.username} - {self.timestamp}"
+        return f"Message from {self.chat_session.user.username} - {self.sender}"
 
 class Ad(models.Model):
     title = models.CharField(max_length=255)

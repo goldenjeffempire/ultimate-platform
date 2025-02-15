@@ -667,9 +667,11 @@ def ad_campaign_detail(request, ad_campaign_id):
     return render(request, 'ad_campaign_detail.html', {'ad_campaign': ad_campaign})
 
 # Start Chat (Chat Sessions)
+@login_required
 def start_chat(request):
+    """Start a new chat session and render the chat interface."""
     chat_session = ChatSession.objects.create(user=request.user)
-    return redirect('chat_session', session_id=chat_session.id)
+    return render(request, 'chat.html', {'session_id': chat_session.id})
 
 # Chat Session
 def chat_session(request, session_id):

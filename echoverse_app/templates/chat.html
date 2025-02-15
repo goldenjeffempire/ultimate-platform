@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Chatbot</title>
+    <script>
+        var session_id = "{{ session_id }}";
+        var socket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + session_id + "/");
+
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += "<p><b>" + data.sender + ":</b> " + data.message + "</p>";
+        };
+
+        function sendMessage() {
+            var input = document.getElementById("chat-input");
+            socket.send(JSON.stringify({ "message": input.value }));
+            input.value = "";
+        }
+    </script>
+</head>
+<body>
+    <h1>Chat with Echoverse AI</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="chat-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
