@@ -1,0 +1,12 @@
+<h1>{{ funnel.name }}</h1>
+<p>{{ funnel.description }}</p>
+
+<h3>Funnel Stages:</h3>
+<ul>
+    {% for stage in funnel.stages %}
+        <li>{{ stage }}</li>
+    {% endfor %}
+</ul>
+
+<h3>AI-Powered Recommendations:</h3>
+<p>{{ recommendations }}</p>

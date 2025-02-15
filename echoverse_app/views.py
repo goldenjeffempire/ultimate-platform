@@ -1,5 +1,6 @@
 import openai
 import stripe
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
@@ -10,7 +11,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
-from .utils import generate_email_content, generate_ad_copy
+from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations
+
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
@@ -91,13 +93,44 @@ def generate_ad(request, product_name, target_audience):
     return JsonResponse({'ad_content': ad_content})
 
 # Create Sales Funnel
-def create_sales_funnel(request, name, steps, conversion_rate):
-    funnel = SalesFunnel.objects.create(
-        name=name,
-        steps=steps,
-        conversion_rate=conversion_rate
-    )
-    return JsonResponse({'message': f'Sales funnel {funnel.name} created successfully'})
+def create_sales_funnel(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        description = request.POST.get('description', '')
+        stages = request.POST.get('stages', '[]')  # Default to empty list if not provided
+        conversion_rate = request.POST.get('conversion_rate', None)
+
+        try:
+            stages = json.loads(stages)  # Convert JSON string to Python list
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format for stages'}, status=400)
+
+        funnel = SalesFunnel.objects.create(
+            name=name,
+            description=description,
+            stages=stages,
+            conversion_rate=conversion_rate if conversion_rate else None  # Handle optional field
+        )
+
+        return redirect('sales_funnel_detail', funnel_id=funnel.id)
+
+    return render(request, 'create_sales_funnel.html')
+
+# Sales Funnel Detail
+def sales_funnel_detail(request, funnel_id):
+    funnel = get_object_or_404(SalesFunnel, id=funnel_id)
+
+    # Ensure stages is a list (since it's stored as JSON)
+    funnel_stages = funnel.stages if isinstance(funnel.stages, list) else []
+
+    # Example: Generate recommendations based on the first stage
+    user_behavior = "User has shown interest in product category X"
+    recommendations = generate_funnel_recommendations(user_behavior, funnel_stages[0] if funnel_stages else "")
+
+    return render(request, 'sales_funnel_detail.html', {
+        'funnel': funnel,
+        'recommendations': recommendations
+    })
 
 # Schedule Post
 def schedule_post(request, content, scheduled_for):

@@ -1,0 +1,11 @@
+<h1>Create Sales Funnel</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="name">Funnel Name:</label>
+    <input type="text" name="name" required>
+    <label for="description">Funnel Description:</label>
+    <textarea name="description" required></textarea>
+    <label for="stages">Funnel Stages (JSON Format):</label>
+    <textarea name="stages" required></textarea>
+    <button type="submit">Create Funnel</button>
+</form>

@@ -29,3 +29,16 @@ def generate_ad_copy(product_name, product_description, product_category):
     )
 
     return response.choices[0].text.strip()
+
+# Generate Funnel Recommendations
+def generate_funnel_recommendations(user_behavior, funnel_stage):
+    prompt = f"Given the user behavior: {user_behavior} and the current funnel stage: {funnel_stage}, suggest personalized recommendations or actions to move the user to the next stage of the sales funnel."
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # or use the most suitable GPT model
+        prompt=prompt,
+        max_tokens=200,
+        temperature=0.7
+    )
+
+    return response.choices[0].text.strip()
