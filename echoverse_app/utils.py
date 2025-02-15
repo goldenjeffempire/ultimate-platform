@@ -55,3 +55,16 @@ def generate_chatbot_response(user_message, chat_history):
     )
 
     return response.choices[0].text.strip()
+
+# Generate Ad Content
+def generate_ad_content(product_name, target_audience, ad_type):
+    prompt = f"Generate an {ad_type} ad for a product called {product_name} targeting {target_audience}. Include a compelling title and description."
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # or use the most suitable GPT model
+        prompt=prompt,
+        max_tokens=200,
+        temperature=0.7
+    )
+
+    return response.choices[0].text.strip()

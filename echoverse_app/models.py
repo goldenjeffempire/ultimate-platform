@@ -424,3 +424,13 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.chat_session.user.username} - {self.timestamp}"
+
+class Ad(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    target_audience = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, choices=[('Draft', 'Draft'), ('Published', 'Published')], default='Draft')
+
+    def __str__(self):
+        return f"Ad: {self.title}"

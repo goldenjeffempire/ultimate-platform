@@ -4,14 +4,14 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession
+from .models import BlogPost, Collaboration, Product, SalesFunnel, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession, Ad
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
-from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations, generate_chatbot_response
+from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations, generate_chatbot_response, generate_ad_content
 
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
@@ -690,3 +690,29 @@ def chat_session(request, session_id):
         return JsonResponse({'response': chatbot_response})
 
     return render(request, 'chat_session.html', {'chat_session': chat_session})
+
+# Create Ad
+def create_ad(request):
+    if request.method == "POST":
+        product_name = request.POST['product_name']
+        target_audience = request.POST['target_audience']
+        ad_type = request.POST['ad_type']
+
+        # Generate ad content using AI
+        ad_content = generate_ad_content(product_name, target_audience, ad_type)
+
+        # Create and save the Ad object
+        ad = Ad.objects.create(
+            title=f"Ad for {product_name}",
+            content=ad_content,
+            target_audience=target_audience
+        )
+
+        return redirect('ad_detail', ad_id=ad.id)
+
+    return render(request, 'create_ad.html')
+
+# Create Ad Detail
+def ad_detail(request, ad_id):
+    ad = Ad.objects.get(id=ad_id)
+    return render(request, 'ad_detail.html', {'ad': ad})
