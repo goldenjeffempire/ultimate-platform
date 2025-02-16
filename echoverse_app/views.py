@@ -202,10 +202,15 @@ def security_settings(request):
         settings.email_notifications_enabled = request.POST.get('email_notifications_enabled') == 'on'
         settings.password_changed_at = timezone.now()
         settings.save()
+
+        # Send an email notification if email notifications are enabled
+        if settings.email_notifications_enabled:
+            send_security_email(request.user)
+
         return redirect('security_settings')
 
     return render(request, 'security_settings.html', {'settings': settings})
-y
+
 # Privacy Preferences
 @login_required
 def privacy_preferences(request):
@@ -219,25 +224,6 @@ def privacy_preferences(request):
         return redirect('privacy_preferences')
 
     return render(request, 'privacy_preferences.html', {'preferences': preferences})
-
-# Security Settings
-@login_required
-def security_settings(request):
-    settings, created = UserSecuritySettings.objects.get_or_create(user=request.user)
-
-    if request.method == 'POST':
-        settings.two_factor_enabled = request.POST.get('two_factor_enabled') == 'on'
-        settings.email_notifications_enabled = request.POST.get('email_notifications_enabled') == 'on'
-        settings.password_changed_at = timezone.now()
-        settings.save()
-
-        # Send an email notification if email notifications are enabled
-        if settings.email_notifications_enabled:
-            send_security_email(request.user)
-
-        return redirect('security_settings')
-
-    return render(request, 'security_settings.html', {'settings': settings})
 
 # Submit Feedback
 def submit_feedback(request):
@@ -366,26 +352,6 @@ def security_settings(request):
     else:
         form = SecuritySettingsForm(instance=settings)
 
-    return render(request, 'security_settings.html', {'form': form})
-
-# Privacy Settings
-@login_required
-def update_privacy_settings(request):
-    try:
-        privacy_settings = PrivacySettings.objects.get(user=request.user)
-    except PrivacySettings.DoesNotExist:
-        privacy_settings = PrivacySettings(user=request.user)
-
-    if request.method == 'POST':
-        form = PrivacySettingsForm(request.POST, instance=privacy_settings)
-        if form.is_valid():
-            form.save()
-            return redirect('privacy_settings')
-    else:
-        form = PrivacySettingsForm(instance=privacy_settings)
-
-    return render(request, 'privacy_settings.html', {'form': form})
-
 # Two Factor Authentication
 @login_required
 def enable_two_factor_authentication(request):
@@ -404,6 +370,7 @@ def enable_two_factor_authentication(request):
     return render(request, 'two_factor_settings.html', {'two_fa': two_fa})
 
 # Privacy Settings
+# Privacy Settings
 @login_required
 def privacy_settings(request):
     privacy_settings, created = UserPrivacySettings.objects.get_or_create(user=request.user)
@@ -413,6 +380,7 @@ def privacy_settings(request):
         if form.is_valid():
             form.save()
             return redirect('privacy_settings')
+
     else:
         form = PrivacySettingsForm(instance=privacy_settings)
 
