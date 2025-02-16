@@ -153,13 +153,17 @@ class UserDashboard(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Dashboard"
 
-class Contact(models.Model):
+class ContactMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
     email = models.EmailField()
+    subject = models.CharField(max_length=255)
     message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.name}"
+        return f"{self.subject} - {self.name}"
+
 
 class TermsAndPolicies(models.Model):
     title = models.CharField(max_length=255)

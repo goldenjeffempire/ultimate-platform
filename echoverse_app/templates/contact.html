@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Support - Echoverse{% endblock %}
+
+{% block content %}
+    <h1>Contact Support</h1>
+    <p>Have any questions or issues? Reach out to us below.</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send Message</button>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

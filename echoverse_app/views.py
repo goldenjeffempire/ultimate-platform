@@ -4,14 +4,15 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, FunelStage, SocialMediaPost, HomePage, UserDashboard, Contact, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession, Ad
+from .models import BlogPost, Collaboration, Product, SalesFunnel, FunelStage, SocialMediaPost, HomePage, UserDashboard, ContactMessage, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession, Ad
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm, SalesFunnelForm, FunnelStageForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm, SalesFunnelForm, FunnelStageForm, ContactForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
 from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations, generate_chatbot_response, generate_ad_content
+from django.contrib import messages
 
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
@@ -169,16 +170,17 @@ def user_dashboard(request):
     }
     return render(request, 'user_dashboard.html', context)
 
-# Contact
-def contact(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-        Contact.objects.create(name=name, email=email, message=message)
-        return JsonResponse({'message': 'Your message has been sent successfully.'})
-
-    return render(request, 'contact.html')
+# Contact Support
+def contact_support(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('contact')  # Ensure 'contact' URL is defined in urls.py
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
 
 # Terms And Policies
 def terms_and_policies(request):
