@@ -4,11 +4,11 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from .services import generate_ai_design, generate_ai_content, generate_seo_meta, generate_product_description, generate_product_price, process_payment, send_email_campaign, send_security_email, generate_ad_content, chatbot
-from .models import BlogPost, Collaboration, Product, SalesFunnel, FunelStage, SocialMediaPost, HomePage, UserDashboard, ContactMessage, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession, Ad
+from .models import BlogPost, Collaboration, Product, SalesFunnel, FunelStage, SocialMediaPost, HomePage, UserDashboard, ContactMessage, TermsAndPolicies, Footer, UserSecuritySettings, PrivacyPreferences, Feedback, ProductReview, ProductListing, SecuritySettings, MarketplaceProduct, MarketplaceTransaction, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, AIGeneratedContent, Storefront, AIProductDescription, Inventory, Order, Payment, AbandonedCart, Customer, EmailCampaign, AdCampaign, ChatSession, Ad, UserReview
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm, SalesFunnelForm, FunnelStageForm, ContactForm
+from .forms import FeedbackForm, ProductReviewForm, ProductForm. SecuritySettingsForm, PrivacySettingsForm, MarketplaceProductForm, StorefrontForm, InventoryForm, SalesFunnelForm, FunnelStageForm, ContactForm, ReviewForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.conf import settings
 from .utils import generate_email_content, generate_ad_copy, generate_funnel_recommendations, generate_chatbot_response, generate_ad_content
@@ -279,10 +279,6 @@ def submit_general_feedback(request):
             feedback.save()
             return redirect('feedback_success')
     return render(request, 'submit_feedback.html')
-
-# Feedback Reviews
-def feedback_reviews(request):
-    return render(request, 'feedback.html')
 
 # Product Details
 def product_detail(request, product_id):
@@ -755,3 +751,21 @@ def add_funnel_stage(request, funnel_id):
     else:
         form = FunnelStageForm()
     return render(request, 'add_funnel_stage.html', {'form': form, 'funnel': funnel})
+
+# Submit Review
+@login_required
+def submit_review(request):
+    if request.method == "POST":
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            messages.success(request, "Your review has been submitted!")
+            return redirect('feedback')
+    else:
+        form = ReviewForm()
+
+    reviews = UserReview.objects.all().order_by('-created_at')
+    return render(request, 'feedback.html', {'form': form, 'reviews': reviews})
+

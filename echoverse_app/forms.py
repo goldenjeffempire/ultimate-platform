@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage, SocialMediaPost, ContactMessage
+from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage, SocialMediaPost, ContactMessage, UserReview
 
 # Feedback Form
 class FeedbackForm(forms.ModelForm):
@@ -82,3 +82,9 @@ class ContactForm(forms.ModelForm):
     class Meta:
         model = ContactMessage
         fields = ['name', 'email', 'subject', 'message']
+
+# Review Form
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = UserReview
+        fields = ['rating', 'comment']

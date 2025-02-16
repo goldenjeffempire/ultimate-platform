@@ -1,8 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}Feedback & Reviews - Echoverse{% endblock %}
+{% block title %}User Feedback & Reviews - Echoverse{% endblock %}
 
 {% block content %}
     <h1>Feedback & User Reviews</h1>
     <p>See what our users have to say and leave your feedback.</p>
+
+    {% if user.is_authenticated %}
+        <h2>Submit Your Review</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit Review</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to submit a review.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>All Reviews</h2>
+    {% if reviews %}
+        {% for review in reviews %}
+            <div>
+                <strong>{{ review.user.username }}</strong> - <em>{{ review.rating }} Stars</em>
+                <p>{{ review.comment }}</p>
+                <small>Posted on {{ review.created_at }}</small>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No reviews yet. Be the first to share your experience!</p>
+    {% endif %}
 {% endblock %}
