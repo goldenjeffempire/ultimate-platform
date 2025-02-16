@@ -41,9 +41,16 @@ class Page(models.Model):
     def __str__(self):
         return f"Page for {self.website.name}"
 
+# Category
 class Category(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
+    CATEGORY_TYPE_CHOICES = [
+        ('product', 'Product Category'),
+        ('general', 'General Category'),
+    ]
+
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    category_type = models.CharField(max_length=10, choices=CATEGORY_TYPE_CHOICES, default='general')
 
     def __str__(self):
         return self.name
@@ -68,28 +75,22 @@ class Collaboration(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.role} for {self.post.title}"
 
-class Product(models.Model):
+# Marketplace Product
+class MarketplaceProduct(models.Model):
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='marketplace_products')
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.IntegerField()
-    category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/', null=True, blank=True)
+    stock = models.PositiveIntegerField(default=1)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='marketplace_products/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    seller = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+    marketplace_listing = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
-
-class ProductListing(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    marketplace_listing = models.BooleanField(default=True)
-    active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"Listing for {self.product.name}"
+        return f"{self.name} by {self.seller.username}"
 
 class EmailCampaign(models.Model):
     name = models.CharField(max_length=255)
@@ -139,7 +140,7 @@ class SocialMediaPost(models.Model):
 class HomePage(models.Model):
     title = models.CharField(max_length=255)
     intro_text = models.TextField()
-    featured_products = models.ManyToManyField(Product)
+    featured_products = models.ManyToManyField(MarketplaceProduct)
     banner_image = models.ImageField(upload_to='home/', null=True, blank=True)
 
     def __str__(self):
@@ -181,134 +182,59 @@ class Footer(models.Model):
     def __str__(self):
         return "Footer Content"
 
-class UserSecuritySettings(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    two_factor_enabled = models.BooleanField(default=False)
-    email_notifications_enabled = models.BooleanField(default=True)
-    password_changed_at = models.DateTimeField(null=True, blank=True)
-    last_login_ip = models.GenericIPAddressField(null=True, blank=True)
-    private_account = models.BooleanField(default=False)
+# User Feedback
+class UserFeedback(models.Model):
+    FEEDBACK_TYPE_CHOICES = [
+        ('product', 'Product Review'),
+        ('service', 'Service Feedback'),
+        ('general', 'General Feedback'),
+    ]
 
-    def __str__(self):
-        return f"Security settings for {self.user.username}"
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedback')
+    feedback_type = models.CharField(max_length=10, choices=FEEDBACK_TYPE_CHOICES)
 
-class PrivacyPreferences(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    share_profile_info = models.BooleanField(default=True)
-    share_activity_with_friends = models.BooleanField(default=True)
-    data_usage_consent = models.BooleanField(default=False)
+    # MarketplaceProduct-related Feedback
+    product = models.ForeignKey(
+        MarketplaceProduct, on_delete=models.CASCADE, null=True, blank=True, related_name='feedback'
+    )
 
-    def __str__(self):
-        return f"Privacy preferences for {self.user.username}"
+    # Service-related feedback
+    service_name = models.CharField(max_length=255, null=True, blank=True)
 
-class Feedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
-    service = models.CharField(max_length=255, null=True, blank=True)
-    message = models.TextField()  # Combined feedback text and review into message
+    # Shared fields
+    message = models.TextField()  # Feedback text or review comment
     rating = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 6)], null=True, blank=True)  # Optional rating
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        if self.product:
-            return f"Feedback from {self.user.username} on {self.product.name}"
+        if self.feedback_type == 'product' and self.product:
+            return f"Product Review: {self.user.username} on {self.product.name}"
+        elif self.feedback_type == 'service' and self.service_name:
+            return f"Service Feedback: {self.user.username} on {self.service_name}"
+        return f"General Feedback by {self.user.username}"
 
-class ProductReview(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_reviews')
-    rating = models.PositiveIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
-    comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Review for {self.product.name} by {self.user.username}"
-
-class GeneralFeedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='general_feedback')
-    feedback_text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Feedback by {self.user.username}"
-
-class SecuritySettings(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    two_factor_auth_enabled = models.BooleanField(default=False)
-    email_notifications_enabled = models.BooleanField(default=True)
-    profile_visibility = models.CharField(
-        max_length=10,
-        choices=[('public', 'Public'), ('private', 'Private')],
-        default='public'
-    )
-    data_sharing_consent = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Security settings for {self.user.username}"
-
-class ProductCategory(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-
-    def __str__(self):
-        return self.name
-
-class MarketplaceProduct(models.Model):
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='marketplace_products')
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock_quantity = models.PositiveIntegerField(default=1)
-    category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, default=1)
-    image = models.ImageField(upload_to='marketplace_products/', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.name} by {self.seller.username}"
-
-class Order(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=False)
-    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE, null=False)
-    quantity = models.PositiveIntegerField(default=1, null=True, blank=True)
+# Marketplace Order
+class MarketplaceOrder(models.Model):
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    product = models.ForeignKey('MarketplaceProduct', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    shipping_address = models.TextField()  # Added from first version
+    shipping_address = models.TextField()
 
-    status_choices = [
+    STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
-        ('canceled', 'Canceled')
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
     ]
-    status = models.CharField(max_length=10, choices=status_choices, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  # Retained from second version
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order #{self.id} - {self.product.name} (Status: {self.status})"
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE)  # Fixed undefined Product
-    quantity = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
-
-class MarketplaceTransaction(models.Model):
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
-    product = models.ForeignKey(MarketplaceProduct, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed'), ('cancelled', 'Cancelled')],
-        default='pending'
-    )
-
-    def __str__(self):
-        return f"Transaction for {self.product.name} by {self.buyer.username}"
+        return f"Order #{self.id} - {self.product.name} by {self.buyer.username} (Status: {self.status})"
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -322,15 +248,6 @@ class Customer(models.Model):
     def __str__(self):
         return f"{self.name} ({self.email})"
 
-class PrivacySettings(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    share_email = models.BooleanField(default=True)
-    share_phone_number = models.BooleanField(default=True)
-    share_activity_status = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"Privacy settings for {self.user.username}"
-
 class TwoFactorAuthentication(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_enabled = models.BooleanField(default=False)
@@ -338,15 +255,6 @@ class TwoFactorAuthentication(models.Model):
 
     def __str__(self):
         return f"2FA for {self.user.username}"
-
-class UserPrivacySettings(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='privacy_settings')
-    share_profile = models.BooleanField(default=True)
-    email_notifications = models.BooleanField(default=True)
-    two_factor_auth = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Privacy settings for {self.user.username}"
 
 class AIGeneratedContent(models.Model):
     title = models.CharField(max_length=255)
@@ -393,7 +301,7 @@ class Inventory(models.Model):
         return f"Inventory for {self.product.name} - {self.quantity} in stock"
 
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(MarketplaceOrder, on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=50)
     payment_status_choices = [
         ('pending', 'Pending'),
@@ -465,3 +373,40 @@ class UserReview(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} - {self.rating} Stars"
+
+# User Security Privacy Settings
+class UserSecurityPrivacySettings(models.Model):
+    PROFILE_VISIBILITY_CHOICES = [
+        ('public', 'Public'),
+        ('private', 'Private'),
+        ('friends_only', 'Friends Only'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='security_privacy_settings')
+
+    # Security Settings
+    two_factor_enabled = models.BooleanField(default=False)
+    email_notifications_enabled = models.BooleanField(default=True)
+    password_changed_at = models.DateTimeField(auto_now=True)
+    last_login_ip = models.GenericIPAddressField(null=True, blank=True)
+
+    # Privacy Preferences
+    share_profile_info = models.BooleanField(default=True)
+    share_activity_with_friends = models.BooleanField(default=True)
+    data_sharing_consent = models.BooleanField(default=False)
+
+    # Privacy Settings
+    share_email = models.BooleanField(default=True)
+    share_phone_number = models.BooleanField(default=True)
+    share_activity_status = models.BooleanField(default=True)
+
+    # General Privacy Settings
+    share_profile = models.BooleanField(default=True)
+    profile_visibility = models.CharField(
+        max_length=20,
+        choices=PROFILE_VISIBILITY_CHOICES,
+        default='public'
+    )
+
+    def __str__(self):
+        return f"Security & Privacy settings for {self.user.username}"

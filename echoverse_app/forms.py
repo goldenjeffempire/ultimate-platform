@@ -1,27 +1,15 @@
 from django import forms
-from .models import Feedback, ProductReview, Product, SecuritySettings, MarketplaceProduct, PrivacySettings, TwoFactorAuthentication, UserPrivacySettings, Storefront, Inventory, SalesFunnel, FunnelStage, SocialMediaPost, ContactMessage, UserReview
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import (
+    MarketplaceOrder, MarketplaceProduct, SecuritySettings, UserPrivacySettings,
+    Storefront, Inventory, SalesFunnel, FunnelStage, SocialMediaPost, ContactMessage, 
+)
 
-# Feedback Form
-class FeedbackForm(forms.ModelForm):
+# Marketplace Order Form
+class MarketplaceOrderForm(forms.ModelForm):
     class Meta:
-        model = Feedback
-        fields = ['product', 'service', 'rating', 'feedback_message']
-
-# Product Review Form
-class ProductReviewForm(forms.ModelForm):
-    class Meta:
-        model = ProductReview
-        fields = ['rating', 'comment']
-
-# General Feedback Form
-class GeneralFeedbackForm(forms.Form):
-    feedback_text = forms.CharField(widget=forms.Textarea, required=True)
-
-# Product Form
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = ['name', 'description', 'price', 'stock']
+        model = MarketplaceOrder
+        fields = ['product', 'quantity', 'shipping_address']
 
 # Marketplace Product Form
 class MarketplaceProductForm(forms.ModelForm):
@@ -33,19 +21,13 @@ class MarketplaceProductForm(forms.ModelForm):
 class SecuritySettingsForm(forms.ModelForm):
     class Meta:
         model = SecuritySettings
-        fields = ['two_factor_auth_enabled', 'email_notifications_enabled', 'profile_visibility', 'data_sharing_consent']
+        fields = ['two_factor_enabled', 'email_notifications_enabled', 'profile_visibility', 'data_sharing_consent']
 
 # Privacy Settings Form
 class PrivacySettingsForm(forms.ModelForm):
     class Meta:
         model = UserPrivacySettings
-        fields = ['share_email', 'share_phone_number', 'share_activity_status', 'share_profile', 'email_notifications', 'two_factor_auth']
-
-# Two Factor Authentication Form
-class TwoFactorAuthenticationForm(forms.ModelForm):
-    class Meta:
-        model = TwoFactorAuthentication
-        fields = ['is_enabled']
+        fields = ['share_profile', 'email_notifications', 'two_factor_auth']
 
 # Storefront Form
 class StorefrontForm(forms.ModelForm):
@@ -83,8 +65,8 @@ class ContactForm(forms.ModelForm):
         model = ContactMessage
         fields = ['name', 'email', 'subject', 'message']
 
-# Review Form
-class ReviewForm(forms.ModelForm):
-    class Meta:
-        model = UserReview
-        fields = ['rating', 'comment']
+# Custom Password Change Form
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
