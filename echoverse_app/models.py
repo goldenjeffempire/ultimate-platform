@@ -187,6 +187,7 @@ class UserSecuritySettings(models.Model):
     email_notifications_enabled = models.BooleanField(default=True)
     password_changed_at = models.DateTimeField(null=True, blank=True)
     last_login_ip = models.GenericIPAddressField(null=True, blank=True)
+    private_account = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Security settings for {self.user.username}"
