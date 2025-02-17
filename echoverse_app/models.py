@@ -117,3 +117,32 @@ class ProductReview(models.Model):
 
     def __str__(self):
         return f"Review for {self.product.name} by {self.user.username}"
+
+# User Profile Models
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+# Application Models
+class Application(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    application_status = models.CharField(max_length=50, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')])
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Application of {self.user.username}"
+
+# Progress Tracker
+class ProgressTracker(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    progress_step = models.CharField(max_length=255)
+    completed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Progress for {self.user.username} - {self.progress_step}"

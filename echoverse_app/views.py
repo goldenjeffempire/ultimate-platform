@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
 
 # Website View Set
@@ -67,3 +67,49 @@ class CartViewSet(viewsets.ModelViewSet):
 class ProductReviewViewSet(viewsets.ModelViewSet):
     queryset = ProductReview.objects.all()
     serializer_class = ProductReviewSerializer
+
+# User profile
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+
+# Application
+class ApplicationViewSet(viewsets.ModelViewSet):
+    queryset = Application.objects.all()
+    serializer_class = ApplicationSerializer
+
+# Progress Tracker
+class ProgressTrackerViewSet(viewsets.ModelViewSet):
+    queryset = ProgressTracker.objects.all()
+    serializer_class = ProgressTrackerSerializer
+
+# Register User
+class RegisterUserView(APIView):
+    def post(self, request):
+        # Custom user registration logic
+        # For simplicity, assume that the user registration is done using Django's built-in user system
+        username = request.data.get('username')
+        password = request.data.get('password')
+        email = request.data.get('email')
+
+        if User.objects.filter(username=username).exists():
+            return Response({"detail": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(username=username, password=password, email=email)
+        UserProfile.objects.create(user=user)
+
+        return Response({"detail": "User registered successfully."}, status=status.HTTP_201_CREATED)
+
+class UpdateProgressView(APIView):
+    def post(self, request):
+        user = request.user  # Assuming user is authenticated
+        progress_step = request.data.get('progress_step')
+        completed = request.data.get('completed', False)
+
+        progress, created = ProgressTracker.objects.get_or_create(
+            user=user, progress_step=progress_step
+        )
+        progress.completed = completed
+        progress.save()
+
+        return Response({"detail": "Progress updated."}, status=status.HTTP_200_OK)

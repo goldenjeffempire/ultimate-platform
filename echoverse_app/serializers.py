@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker
 
 
 # Website Serializer
@@ -68,3 +68,21 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductReview
         fields = ['id', 'product', 'user', 'rating', 'comment']
+
+# User Profile
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'user', 'bio', 'profile_picture']
+
+# Application
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = ['id', 'user', 'application_status', 'submitted_at', 'last_updated_at']
+
+# Progress Tracker
+class ProgressTrackerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgressTracker
+        fields = ['id', 'user', 'progress_step', 'completed', 'timestamp']
