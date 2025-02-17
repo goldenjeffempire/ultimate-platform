@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview
 
 
 # Website Serializer
@@ -38,3 +38,33 @@ class BlogCollaborationSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogCollaboration
         fields = ['id', 'post', 'user', 'role']
+
+# Product Category
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCategory
+        fields = ['id', 'name', 'description']
+
+# Product
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'seller', 'category', 'name', 'description', 'price', 'stock_quantity', 'image', 'created_at']
+
+# Order
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'product', 'quantity', 'total_price', 'order_status', 'created_at']
+
+# Cart
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'product', 'quantity']
+
+# Product Review
+class ProductReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductReview
+        fields = ['id', 'product', 'user', 'rating', 'comment']

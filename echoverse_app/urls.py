@@ -10,10 +10,14 @@ router.register(r'content-blocks', views.ContentBlockViewSet)
 router.register(r'blog-categories', views.BlogCategoryViewSet)
 router.register(r'blog-posts', views.BlogPostViewSet)
 router.register(r'blog-collaborations', views.BlogCollaborationViewSet)
-
+router.register(r'product-categories', views.ProductCategoryViewSet)
+router.register(r'products', views.ProductViewSet)
+router.register(r'orders', views.OrderViewSet)
+router.register(r'cart', views.CartViewSet)
+router.register(r'product-reviews', views.ProductReviewViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/ai/generate-content/', AIContentGenerationView.as_view(), name='generate-content'),  # Add the AI content generation endpoint
+    path('api/ai/generate-content/', views.AIContentGenerationView.as_view(), name='generate-content'),  # Add the AI content generation endpoint
 
 ]
