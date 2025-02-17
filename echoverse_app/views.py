@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
 
 # Website View Set
@@ -100,6 +100,7 @@ class RegisterUserView(APIView):
 
         return Response({"detail": "User registered successfully."}, status=status.HTTP_201_CREATED)
 
+# Update Progress
 class UpdateProgressView(APIView):
     def post(self, request):
         user = request.user  # Assuming user is authenticated
@@ -113,3 +114,44 @@ class UpdateProgressView(APIView):
         progress.save()
 
         return Response({"detail": "Progress updated."}, status=status.HTTP_200_OK)
+
+# Learning Module
+class LearningModuleViewSet(viewsets.ModelViewSet):
+    queryset = LearningModule.objects.all()
+    serializer_class = LearningModuleSerializer
+
+# User Module Progress
+class UserModuleProgressViewSet(viewsets.ModelViewSet):
+    queryset = UserModuleProgress.objects.all()
+    serializer_class = UserModuleProgressSerializer
+
+# Quiz
+class QuizViewSet(viewsets.ModelViewSet):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
+
+# Question
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+# User Quiz Answer
+class UserQuizAnswerViewSet(viewsets.ModelViewSet):
+    queryset = UserQuizAnswer.objects.all()
+    serializer_class = UserQuizAnswerSerializer
+
+# Update Module Progress
+class UpdateModuleProgressView(APIView):
+    def post(self, request):
+        user = request.user  # Assuming user is authenticated
+        module_id = request.data.get('module_id')
+        progress = request.data.get('progress')
+
+        module = LearningModule.objects.get(id=module_id)
+        user_progress, created = UserModuleProgress.objects.get_or_create(
+            user=user, module=module
+        )
+        user_progress.progress = progress
+        user_progress.save()
+
+        return Response({"detail": "Module progress updated."}, status=status.HTTP_200_OK)

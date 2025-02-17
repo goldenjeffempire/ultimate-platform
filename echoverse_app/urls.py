@@ -18,10 +18,16 @@ router.register(r'product-reviews', views.ProductReviewViewSet)
 router.register(r'user-profiles', views.UserProfileViewSet)
 router.register(r'applications', views.ApplicationViewSet)
 router.register(r'progress-tracker', views.ProgressTrackerViewSet)
+router.register(r'learning-modules', views.LearningModuleViewSet)
+router.register(r'user-module-progress', views.UserModuleProgressViewSet)
+router.register(r'quizzes', views.QuizViewSet)
+router.register(r'questions', views.QuestionViewSet)
+router.register(r'user-quiz-answers', views.UserQuizAnswerViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api/ai/generate-content/', views.AIContentGenerationView.as_view(), name='generate-content'),  # Add the AI content generation endpoint
     path('api/register/', views.RegisterUserView.as_view(), name='register-user'),
     path('api/update-progress/', views.UpdateProgressView.as_view(), name='update-progress'),
+    path('api/update-module-progress/', views.UpdateModuleProgressView.as_view(), name='update-module-progress'),
 ]

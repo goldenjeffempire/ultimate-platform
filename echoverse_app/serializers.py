@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer
 
 
 # Website Serializer
@@ -86,3 +86,33 @@ class ProgressTrackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgressTracker
         fields = ['id', 'user', 'progress_step', 'completed', 'timestamp']
+
+# Learning Module
+class LearningModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LearningModule
+        fields = ['id', 'title', 'description', 'created_at']
+
+# User Module Progress
+class UserModuleProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModuleProgress
+        fields = ['id', 'user', 'module', 'progress']
+
+# Quiz
+class QuizSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = ['id', 'title', 'module', 'created_at']
+
+# Question
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'quiz', 'question_text', 'correct_answer']
+
+# User Quiz Answer
+class UserQuizAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserQuizAnswer
+        fields = ['id', 'user', 'quiz', 'answer']
