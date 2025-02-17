@@ -1,22 +1,44 @@
 {% extends "base.html" %}
 
-{% block title %}Security & Privacy - Echoverse{% endblock %}
+{% block title %}Security & Privacy Settings - Echoverse{% endblock %}
 
 {% block content %}
     <h1>Security & Privacy Settings</h1>
     <p>Manage security settings and ensure your data is protected.</p>
 
-    <form method="POST">
+    <!-- Display messages -->
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- Security Settings Form -->
+    <h2>Account Security</h2>
+    <form method="post">
         {% csrf_token %}
-        
-        {{ form.as_p }}
+        {{ security_form.as_p }}
 
-        <label for="two_factor_enabled">Enable Two-Factor Authentication:</label>
-        <input type="checkbox" name="two_factor_enabled" {% if settings.two_factor_enabled %}checked{% endif %}>
+        <label for="profile_visibility">Profile Visibility:</label>
+        <select name="profile_visibility">
+            <option value="public" {% if security_form.instance.profile_visibility == "public" %}selected{% endif %}>Public</option>
+            <option value="private" {% if security_form.instance.profile_visibility == "private" %}selected{% endif %}>Private</option>
+        </select>
 
-        <label for="email_notifications_enabled">Enable Email Notifications:</label>
-        <input type="checkbox" name="email_notifications_enabled" {% if settings.email_notifications_enabled %}checked{% endif %}>
+        <label for="data_sharing_consent">Allow Data Sharing:</label>
+        <input type="checkbox" name="data_sharing_consent" {% if security_form.instance.data_sharing_consent %}checked{% endif %}>
 
-        <button type="submit">Save Settings</button>
+        <button type="submit" name="update_security">Update Security Settings</button>
     </form>
+
+    <!-- Password Change Form -->
+    <h2>Change Password</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ password_form.as_p }}
+        <button type="submit" name="change_password">Change Password</button>
+    </form>
+
 {% endblock %}

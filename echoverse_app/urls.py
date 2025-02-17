@@ -1,47 +1,19 @@
-from django.urls import path
+# urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'websites', views.WebsiteViewSet)
+router.register(r'templates', views.TemplateViewSet)
+router.register(r'content-blocks', views.ContentBlockViewSet)
+router.register(r'blog-categories', views.BlogCategoryViewSet)
+router.register(r'blog-posts', views.BlogPostViewSet)
+router.register(r'blog-collaborations', views.BlogCollaborationViewSet)
+
+
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('ai-design/<str:industry>/', views.ai_design, name='ai_design'),
-    path('add-section/<int:page_id>/<str:section_name>/<str:content>/', views.add_section, name='add_section'),
-    path('get-page-sections/<int:page_id>/', views.get_page_sections, name='get_page_sections'),
-    path('ai-content/<str:title>/', views.ai_content, name='ai_content'),
-    path('add-collaborator/<int:post_id>/<int:user_id>/<str:role>/', views.add_collaborator, name='add_collaborator'),
-    path('seo-meta/<int:post_id>/', views.seo_meta, name='seo_meta'),
-    path('generate-product-info/<int:product_id>/', views.generate_product_info, name='generate_product_info'),
-    path('update-inventory/<int:product_id>/<int:quantity>/', views.update_inventory, name='update_inventory'),
-    path('check-inventory/<int:product_id>/', views.check_inventory, name='check_inventory'),
-    path('send-campaign/<int:campaign_id>/', views.send_campaign, name='send_campaign'),
-    path('generate-ad/<str:product_name>/<str:target_audience>/', views.generate_ad, name='generate_ad'),
-    path('create-sales-funnel/', views.create_sales_funnel, name='create_sales_funnel'),
-    path('schedule-post/', views.schedule_post, name='schedule_post'),
-    path('chatbot/<str:query>/', views.chatbot, name='chatbot'),
-    path('dashboard/', views.user_dashboard, name='user_dashboard'),
-    path('contact/', views.contact_support, name='contact'),
-    path('terms-and-policies/', views.terms_and_policies, name='terms_and_policies'),
-    path('footer/', views.footer, name='footer'),
-    path('security-settings/', views.security_settings, name='security_settings'),
-    path('privacy-preferences/', views.privacy_preferences, name='privacy_preferences'),
-    path('submit-feedback/', views.submit_general_feedback, name='submit_feedback'),
-    path('product/<int:product_id>/submit_review', views.submit_product_review, name='submit_product_review'),
-    path('feedback/', views.submit_review, name='feedback'),
-    path('marketplace/', views.marketplace, name='marketplace'),
-    path('create-product/', views.create_product, name='create_product'),
-    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
-    path('buy/<int:product_id>/', views.buy_product, name='buy_product'),
-    path('list-product/', views.list_product, name='list_product'),
-    path('security-settings/', views.security_settings, name='security_settings'),
-    path('privacy-settings/', views.update_privacy_settings, name='privacy_settings'),
-    path('two-factor-authentication/', views.enable_two_factor_authentication, name='two_factor_settings'),
-    path('privacy-settings/', views.privacy_settings, name='privacy_settings'),
-    path('generate-ai-content/', views.generate_ai_content, name='generate_ai_content'),
-    path('create-storefront/', views.create_storefront, name='create_storefront'),
-    path('storefront/<int:storefront_id>/', views.view_storefront, name='view_storefront'),
-    path('generate-ai-product-description/<int:product_id>/', views.generate_ai_product_description, name='generate_ai_product_description'),
-    path('manage-inventory/', views.manage_inventory, name='manage_inventory'),
-    path('manage-orders/', views.manage_orders, name='manage_orders'),
-    path('checkout/<int:order_id>/', views.checkout, name='checkout'),
-    path('payment-success/<str:payment_id>/', views.payment_success, name='payment_success'),
-    path('payment-failure/<str:payment_id>/', views.payment_failure, name='payment_failure'),
+    path('api/', include(router.urls)),
+    path('api/ai/generate-content/', AIContentGenerationView.as_view(), name='generate-content'),  # Add the AI content generation endpoint
+
 ]
