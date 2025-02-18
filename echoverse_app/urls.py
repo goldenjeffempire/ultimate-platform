@@ -23,6 +23,9 @@ router.register(r'user-module-progress', views.UserModuleProgressViewSet)
 router.register(r'quizzes', views.QuizViewSet)
 router.register(r'questions', views.QuestionViewSet)
 router.register(r'user-quiz-answers', views.UserQuizAnswerViewSet)
+router.register(r'scholarships', views.ScholarshipViewSet)
+router.register(r'sponsorships', views.SponsorshipViewSet)
+router.register(r'student-performance', views.StudentPerformanceViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
@@ -30,4 +33,5 @@ urlpatterns = [
     path('api/register/', views.RegisterUserView.as_view(), name='register-user'),
     path('api/update-progress/', views.UpdateProgressView.as_view(), name='update-progress'),
     path('api/update-module-progress/', views.UpdateModuleProgressView.as_view(), name='update-module-progress'),
+    path('api/update-student-performance/', views.UpdateStudentPerformanceView.as_view(), name='update-student-performance'),
 ]

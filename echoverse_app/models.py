@@ -191,3 +191,33 @@ class UserQuizAnswer(models.Model):
 
     def __str__(self):
         return f"Answer for {self.quiz.title} by {self.user.username}"
+
+# Scholarship Models
+class Scholarship(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    eligibility_criteria = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Sponsorship Models
+class Sponsorship(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    funding_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Student Performance Models
+class StudentPerformance(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    grade = models.CharField(max_length=10)
+    comments = models.TextField()
+    tracked_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Performance of {self.student.username} - {self.grade}"

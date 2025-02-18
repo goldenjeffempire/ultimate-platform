@@ -2,9 +2,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
+
 
 # Website View Set
 class WebsiteViewSet(viewsets.ModelViewSet):
@@ -155,3 +156,35 @@ class UpdateModuleProgressView(APIView):
         user_progress.save()
 
         return Response({"detail": "Module progress updated."}, status=status.HTTP_200_OK)
+
+# Scholarship
+class ScholarshipViewSet(viewsets.ModelViewSet):
+    queryset = Scholarship.objects.all()
+    serializer_class = ScholarshipSerializer
+
+# Sponsorship
+class SponsorshipViewSet(viewsets.ModelViewSet):
+    queryset = Sponsorship.objects.all()
+    serializer_class = SponsorshipSerializer
+
+# Student Performance
+class StudentPerformanceViewSet(viewsets.ModelViewSet):
+    queryset = StudentPerformance.objects.all()
+    serializer_class = StudentPerformanceSerializer
+
+# Update Student Performance
+class UpdateStudentPerformanceView(APIView):
+    def post(self, request):
+        student_id = request.data.get('student_id')
+        grade = request.data.get('grade')
+        comments = request.data.get('comments')
+
+        student = User.objects.get(id=student_id)
+        performance, created = StudentPerformance.objects.get_or_create(
+            student=student
+        )
+        performance.grade = grade
+        performance.comments = comments
+        performance.save()
+
+        return Response({"detail": "Student performance updated."}, status=status.HTTP_200_OK)

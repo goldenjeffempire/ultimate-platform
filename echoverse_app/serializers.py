@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance
 
 
 # Website Serializer
@@ -116,3 +116,21 @@ class UserQuizAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserQuizAnswer
         fields = ['id', 'user', 'quiz', 'answer']
+
+# Scholarship
+class ScholarshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scholarship
+        fields = ['id', 'title', 'description', 'eligibility_criteria', 'created_at']
+
+# Sponsorship
+class SponsorshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sponsorship
+        fields = ['id', 'title', 'description', 'funding_amount', 'created_at']
+
+# Student Performance
+class StudentPerformanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentPerformance
+        fields = ['id', 'student', 'grade', 'comments', 'tracked_at']
