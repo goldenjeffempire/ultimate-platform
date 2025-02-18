@@ -7,14 +7,24 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch user data if authenticated
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        // If no token, redirect to login
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
         const response = await axios.get("http://localhost:8000/api/auth/user/", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUser(response.data);
       } catch (error) {
+        // In case of any error (e.g., token expired), redirect to login
         navigate("/login");
       }
     };
@@ -26,7 +36,7 @@ const Dashboard = () => {
     <div className="dashboard">
       {user ? (
         <>
-          <h1>Welcome, {user.email}!</h1>
+          <h1>Welcome, {user.name || user.email}!</h1>
           <p>Explore Echoverse and build your online presence.</p>
         </>
       ) : (

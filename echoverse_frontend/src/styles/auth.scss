@@ -1,35 +1,39 @@
 .auth-container {
   max-width: 400px;
   margin: auto;
-  padding: 2rem;
-  background: $santas-gray;
+  padding: 20px;
+  background: $mischka;
   border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   h2 {
     color: $gun-powder;
   }
 
-  input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid $waterloo;
-    border-radius: 5px;
+  form {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid $santas-gray;
+      border-radius: 5px;
+    }
+
+    button {
+      background: $coffee;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   }
 
-  button {
-    width: 100%;
-    padding: 10px;
-    background: $gun-powder;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-
-    &:hover {
-      background: $empress;
-    }
+  .error-text {
+    color: red;
+    font-size: 12px;
   }
 }

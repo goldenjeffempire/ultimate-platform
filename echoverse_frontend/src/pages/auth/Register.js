@@ -1,57 +1,44 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "./styles/auth.scss";
 
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      await axios.post("http://localhost:8000/api/auth/register/", {
-        email,
-        password,
-      });
+      const response = await axios.post("/api/auth/register/", data);
+      toast.success("Registration successful! Please log in.");
       navigate("/login");
     } catch (error) {
-      console.error("Registration failed", error.response.data);
+      toast.error("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="auth-container">
-      <h2>Create an Account</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Register</button>
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input type="text" placeholder="Full Name" {...register("name", { required: true })} />
+        {errors.name && <p className="error-text">Name is required</p>}
+
+        <input type="email" placeholder="Email" {...register("email", { required: true })} />
+        {errors.email && <p className="error-text">Valid email is required</p>}
+
+        <input type="password" placeholder="Password" {...register("password", { required: true, minLength: 6 })} />
+        {errors.password && <p className="error-text">Password must be at least 6 characters</p>}
+
+        <button type="submit" disabled={loading}>{loading ? "Signing Up..." : "Sign Up"}</button>
       </form>
+      <p>Already have an account? <a href="/login">Log in</a></p>
     </div>
   );
 };
