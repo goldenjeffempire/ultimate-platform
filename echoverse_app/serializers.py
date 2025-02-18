@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, ActivityLog, KnowledgeBaseArticle, LiveChatSession, Ticket
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, ActivityLog, KnowledgeBaseArticle, LiveChatSession, Ticket, StudentInsight, WebsiteAnalytics, ScholarshipImpactReport
 
 
 # Website Serializer
@@ -218,3 +218,21 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ['id', 'user', 'issue_description', 'status', 'created_at', 'updated_at']
+
+# Student Insight
+class StudentInsightSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentInsight
+        fields = ['id', 'student', 'courses_completed', 'quiz_scores', 'last_activity']
+
+# Website Analytics
+class WebsiteAnalyticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WebsiteAnalytics
+        fields = ['id', 'page_visits', 'unique_visitors', 'session_duration_avg', 'bounce_rate']
+
+# Scholarship Impact Report
+class ScholarshipImpactReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScholarshipImpactReport
+        fields = ['id', 'scholarship_name', 'students_affected', 'total_funding', 'success_rate']

@@ -451,3 +451,33 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"Ticket {self.id} - {self.status}"
+
+# Student Insight Models
+class StudentInsight(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    courses_completed = models.IntegerField(default=0)
+    quiz_scores = models.JSONField()  # Store scores as a JSON object
+    last_activity = models.DateTimeField()
+
+    def __str__(self):
+        return f"Insights for {self.student.username}"
+
+# Website Analytics Models
+class WebsiteAnalytics(models.Model):
+    page_visits = models.IntegerField(default=0)
+    unique_visitors = models.IntegerField(default=0)
+    session_duration_avg = models.FloatField()  # Average session duration in minutes
+    bounce_rate = models.FloatField()  # Bounce rate percentage
+
+    def __str__(self):
+        return "Website Analytics"
+
+# Scholarship Impact Report Models
+class ScholarshipImpactReport(models.Model):
+    scholarship_name = models.CharField(max_length=255)
+    students_affected = models.IntegerField(default=0)
+    total_funding = models.FloatField()
+    success_rate = models.FloatField()  # Percentage of students that succeeded after receiving scholarship
+
+    def __str__(self):
+        return f"Impact report for {self.scholarship_name}"

@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, CustomUser, ActivityLog, Leaderboard, Badge, Achievement, GroupProject, Portfolio, KnowledgeBaseArticle, LiveChatSession, Ticket
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer, CRMContactSerializer, EmailCampaignSerializer, AdCampaignSerializer, SalesFunnelSerializer, ChatbotInteractionSerializer, AlumniSerializer, JobPostingSerializer, LiveEventSerializer, MentorshipSerializer, UserRoleSerializer, ActivityLogSerializer, LeaderboardSerializer, BadgeSerializer, AchievementSerializer, GroupProjectSerializer, PortfolioSerializer, KnowledgeBaseArticleSerializer, LiveChatSessionSerializer, TicketSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, CustomUser, ActivityLog, Leaderboard, Badge, Achievement, GroupProject, Portfolio, KnowledgeBaseArticle, LiveChatSession, Ticket, StudentInsight, WebsiteAnalytics, ScholarshipImpactReport
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer, CRMContactSerializer, EmailCampaignSerializer, AdCampaignSerializer, SalesFunnelSerializer, ChatbotInteractionSerializer, AlumniSerializer, JobPostingSerializer, LiveEventSerializer, MentorshipSerializer, UserRoleSerializer, ActivityLogSerializer, LeaderboardSerializer, BadgeSerializer, AchievementSerializer, GroupProjectSerializer, PortfolioSerializer, KnowledgeBaseArticleSerializer, LiveChatSessionSerializer, TicketSerializer, StudentInsightSerializer, WebsiteAnalyticsSerializer, ScholarshipImpactReportSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
 
 
@@ -288,3 +288,18 @@ class LiveChatSessionViewSet(viewsets.ModelViewSet):
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
+# Student Insight
+class StudentInsightViewSet(viewsets.ModelViewSet):
+    queryset = StudentInsight.objects.all()
+    serializer_class = StudentInsightSerializer
+
+# Website Analytics
+class WebsiteAnalyticsViewSet(viewsets.ModelViewSet):
+    queryset = WebsiteAnalytics.objects.all()
+    serializer_class = WebsiteAnalyticsSerializer
+
+# Scholarship Impact Report
+class ScholarshipImpactReportViewSet(viewsets.ModelViewSet):
+    queryset = ScholarshipImpactReport.objects.all()
+    serializer_class = ScholarshipImpactReportSerializer

@@ -45,6 +45,9 @@ router.register(r'portfolios', views.PortfolioViewSet)
 router.register(r'knowledge-base', views.KnowledgeBaseArticleViewSet)
 router.register(r'live-chat', views.LiveChatSessionViewSet)
 router.register(r'tickets', views.TicketViewSet)
+router.register(r'student-insights', views.StudentInsightViewSet)
+router.register(r'website-analytics', views.WebsiteAnalyticsViewSet)
+router.register(r'scholarship-reports', views.ScholarshipImpactReportViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
