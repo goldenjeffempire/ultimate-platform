@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import "./styles/auth.scss";
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       const response = await axios.post("/api/auth/login/", data);
-      const { access } = response.data;
-      localStorage.setItem("token", access);
-      setUser(jwtDecode(access)); // Store user data
       toast.success("Login successful!");
-      navigate("/dashboard");
+      navigate("/dashboard"); // Redirect to the dashboard or home page
     } catch (error) {
-      toast.error("Invalid email or password");
+      toast.error("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -29,17 +25,36 @@ const Login = ({ setUser }) => {
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <h2>Log In</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input type="email" placeholder="Email" {...register("email", { required: true })} />
-        {errors.email && <p className="error-text">Email is required</p>}
+        {/* Username */}
+        <input 
+          type="text" 
+          placeholder="Username" 
+          {...register("username", { required: true })} 
+        />
+        {errors.username && <p className="error-text">Username is required</p>}
 
-        <input type="password" placeholder="Password" {...register("password", { required: true })} />
-        {errors.password && <p className="error-text">Password is required</p>}
+        {/* Password */}
+        <input 
+          type="password" 
+          placeholder="Password" 
+          {...register("password", { required: true, minLength: 6 })} 
+        />
+        {errors.password && (
+          <p className="error-text">Password must be at least 6 characters</p>
+        )}
 
-        <button type="submit" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
+        {/* Submit Button */}
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging In..." : "Log In"}
+        </button>
       </form>
-      <p>Don't have an account? <a href="/register">Sign up</a></p>
+
+      {/* Redirect to Register if user doesn't have an account */}
+      <p>
+        Don't have an account? <a href="/register">Sign Up</a>
+      </p>
     </div>
   );
 };
