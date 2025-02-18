@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, CustomUser, ActivityLog
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer, CRMContactSerializer, EmailCampaignSerializer, AdCampaignSerializer, SalesFunnelSerializer, ChatbotInteractionSerializer, AlumniSerializer, JobPostingSerializer, LiveEventSerializer, MentorshipSerializer, UserRoleSerializer, ActivityLogSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
 
 
@@ -188,3 +188,58 @@ class UpdateStudentPerformanceView(APIView):
         performance.save()
 
         return Response({"detail": "Student performance updated."}, status=status.HTTP_200_OK)
+
+# CRM Contact
+class CRMContactViewSet(viewsets.ModelViewSet):
+    queryset = CRMContact.objects.all()
+    serializer_class = CRMContactSerializer
+
+# Email Campaign
+class EmailCampaignViewSet(viewsets.ModelViewSet):
+    queryset = EmailCampaign.objects.all()
+    serializer_class = EmailCampaignSerializer
+
+# Ad Campaign
+class AdCampaignViewSet(viewsets.ModelViewSet):
+    queryset = AdCampaign.objects.all()
+    serializer_class = AdCampaignSerializer
+
+# Sales Funnel
+class SalesFunnelViewSet(viewsets.ModelViewSet):
+    queryset = SalesFunnel.objects.all()
+    serializer_class = SalesFunnelSerializer
+
+# ChatBot Interaction
+class ChatbotInteractionViewSet(viewsets.ModelViewSet):
+    queryset = ChatbotInteraction.objects.all()
+    serializer_class = ChatbotInteractionSerializer
+
+# Alumni
+class AlumniViewSet(viewsets.ModelViewSet):
+    queryset = Alumni.objects.all()
+    serializer_class = AlumniSerializer
+
+# Job Posting
+class JobPostingViewSet(viewsets.ModelViewSet):
+    queryset = JobPosting.objects.all()
+    serializer_class = JobPostingSerializer
+
+# Live Event
+class LiveEventViewSet(viewsets.ModelViewSet):
+    queryset = LiveEvent.objects.all()
+    serializer_class = LiveEventSerializer
+
+# Mentorship
+class MentorshipViewSet(viewsets.ModelViewSet):
+    queryset = Mentorship.objects.all()
+    serializer_class = MentorshipSerializer
+
+# User Role
+class UserRoleViewSet(viewsets.ModelViewSet):
+    queryset = UserRole.objects.all()
+    serializer_class = UserRoleSerializer
+
+# Activity Log
+class ActivityLogViewSet(viewsets.ModelViewSet):
+    queryset = ActivityLog.objects.all()
+    serializer_class = ActivityLogSerializer

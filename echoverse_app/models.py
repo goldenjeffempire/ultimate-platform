@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser, Permission
+from django_otp.models import OTPModel
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from cryptography.fernet import Fernet
 
 # Website Models
 class Website(models.Model):
@@ -221,3 +224,144 @@ class StudentPerformance(models.Model):
 
     def __str__(self):
         return f"Performance of {self.student.username} - {self.grade}"
+
+# CRM Contact Models
+class CRMContact(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
+# Email Campaign Models
+class EmailCampaign(models.Model):
+    title = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255)
+    content = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Ad Campaign Models
+class AdCampaign(models.Model):
+    title = models.CharField(max_length=255)
+    platform = models.CharField(max_length=100)
+    budget = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Sales Funnel Models
+class SalesFunnel(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+# ChatBot Models
+class ChatbotInteraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    response = models.TextField()
+    interacted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Interaction with {self.user.username}"
+
+# Alumni Models
+class Alumni(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    graduation_year = models.IntegerField()
+    degree = models.CharField(max_length=255)
+    current_job = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.degree}"
+
+# Job Posting Models
+class JobPosting(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    company = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    posted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Live Event Models
+class LiveEvent(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    event_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+# Mentorship Models
+class Mentorship(models.Model):
+    mentor = models.ForeignKey(User, related_name="mentor", on_delete=models.CASCADE)
+    mentee = models.ForeignKey(User, related_name="mentee", on_delete=models.CASCADE)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    goals = models.TextField()
+
+    def __str__(self):
+        return f"{self.mentor.username} -> {self.mentee.username}"
+
+# User OTP Models
+class UserOTP(OTPModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    device = models.OneToOneField(TOTPDevice, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"2FA for {self.user.username}"
+
+# User Role Models
+class UserRole(models.Model):
+    name = models.CharField(max_length=255)
+    permissions = models.ManyToManyField(Permission, blank=True)
+
+    def __str__(self):
+        return self.name
+
+# Custom User
+class CustomUser(AbstractUser):
+    role = models.ForeignKey(UserRole, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def has_permission(self, permission_name):
+        return self.role.permissions.filter(name=permission_name).exists()
+
+# Use this for encrypting/decrypting sensitive fields
+class SensitiveData(models.Model):
+    sensitive_info = models.TextField()
+
+    def save(self, *args, **kwargs):
+        fernet = Fernet('your_secret_key')
+        self.sensitive_info = fernet.encrypt(self.sensitive_info.encode())
+        super().save(*args, **kwargs)
+
+    def decrypt_info(self):
+        fernet = Fernet('your_secret_key')
+        return fernet.decrypt(self.sensitive_info.encode()).decode()
+
+# Activity Log Models
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action} at {self.timestamp}"

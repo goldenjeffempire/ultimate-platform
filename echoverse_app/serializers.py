@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, ActivityLog
 
 
 # Website Serializer
@@ -134,3 +134,69 @@ class StudentPerformanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentPerformance
         fields = ['id', 'student', 'grade', 'comments', 'tracked_at']
+
+# CRM Contact
+class CRMContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CRMContact
+        fields = ['id', 'user', 'first_name', 'last_name', 'email', 'phone', 'created_at']
+
+# Email Campaign
+class EmailCampaignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailCampaign
+        fields = ['id', 'title', 'subject', 'content', 'sent_at']
+
+# Ad Campaign
+class AdCampaignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdCampaign
+        fields = ['id', 'title', 'platform', 'budget', 'start_date', 'end_date', 'created_at']
+
+# Sales Funnel
+class SalesFunnelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesFunnel
+        fields = ['id', 'name', 'description', 'created_at']
+
+# Chatbot Interaction
+class ChatbotInteractionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatbotInteraction
+        fields = ['id', 'user', 'message', 'response', 'interacted_at']
+
+# Alumni
+class AlumniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alumni
+        fields = ['id', 'user', 'graduation_year', 'degree', 'current_job', 'bio']
+
+# Job Posting
+class JobPostingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPosting
+        fields = ['id', 'title', 'description', 'company', 'location', 'posted_at']
+
+# Live Event
+class LiveEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LiveEvent
+        fields = ['id', 'title', 'description', 'event_date', 'created_at']
+
+# Mentorship
+class MentorshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mentorship
+        fields = ['id', 'mentor', 'mentee', 'start_date', 'end_date', 'goals']
+
+# User Role
+class UserRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserRole
+        fields = ['id', 'name', 'permissions']
+
+# Activty Log
+class ActivityLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityLog
+        fields = ['id', 'user', 'action', 'timestamp']

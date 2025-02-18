@@ -26,6 +26,17 @@ router.register(r'user-quiz-answers', views.UserQuizAnswerViewSet)
 router.register(r'scholarships', views.ScholarshipViewSet)
 router.register(r'sponsorships', views.SponsorshipViewSet)
 router.register(r'student-performance', views.StudentPerformanceViewSet)
+router.register(r'crm-contacts', views.CRMContactViewSet)
+router.register(r'email-campaigns', views.EmailCampaignViewSet)
+router.register(r'ad-campaigns', views.AdCampaignViewSet)
+router.register(r'sales-funnels', views.SalesFunnelViewSet)
+router.register(r'chatbot-interactions', views.ChatbotInteractionViewSet)
+router.register(r'alumni', views.AlumniViewSet)
+router.register(r'job-postings', views.JobPostingViewSet)
+router.register(r'live-events', views.LiveEventViewSet)
+router.register(r'mentorships', views.MentorshipViewSet)
+router.register(r'user-roles', views.UserRoleViewSet)
+router.register(r'activity-logs', views.ActivityLogViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
