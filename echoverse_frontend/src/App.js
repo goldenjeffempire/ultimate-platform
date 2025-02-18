@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
 import StoreBuilder from "./pages/StoreBuilder";
 import BlogEditor from "./pages/BlogEditor";
+import SellerDashboard from "./pages/SellerDashboard";
+import ProductListing from "./pages/ProductListing";
 import AdminPanel from "./pages/AdminPanel";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/store-builder" element={<StoreBuilder />} />
         <Route path="/blog-editor" element={<BlogEditor />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
+        <Route path="/shop" element={<ProductListing />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

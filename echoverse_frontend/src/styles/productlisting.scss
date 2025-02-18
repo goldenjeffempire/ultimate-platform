@@ -1,0 +1,49 @@
+.product-listing {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+
+  h2 {
+    text-align: center;
+    color: $gun-powder;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+
+    .product-card {
+      background: $soft-amber;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+
+      img {
+        width: 100%;
+        border-radius: 5px;
+      }
+
+      h3 {
+        margin: 10px 0;
+        color: $waterloo-;
+      }
+
+      p {
+        color: $venus;
+        font-weight: bold;
+      }
+
+      .buy-btn {
+        display: inline-block;
+        background: $coffee;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 10px;
+      }
+    }
+  }
+}
