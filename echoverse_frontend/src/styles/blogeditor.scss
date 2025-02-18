@@ -1,0 +1,54 @@
+.blog-editor {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: $mischka;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    color: $gun-powder;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid $venus;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .ql-editor {
+    min-height: 200px;
+  }
+
+  .ai-btn {
+    background: $waterloo-;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .save-btn {
+    background: $coffee;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+  }
+
+  .ai-suggestion {
+    background: $santas-gray;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+}
