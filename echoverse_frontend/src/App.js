@@ -9,6 +9,8 @@ import Register from "./pages/auth/Register";
 // Main Pages
 import HomePage from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Recommendations from "./components/Recommendations";
 import StoreBuilder from "./pages/StoreBuilder";
 import BlogEditor from "./pages/BlogEditor";
 import SellerDashboard from "./pages/SellerDashboard";
@@ -52,6 +54,8 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard user={user} />} />
         <Route path="/dashboard" element={<PrivateRoute user={user}><Dashboard user={user} /></PrivateRoute>} />
+        <Route path="/profile" element={<Profile user={user} />} />
+        <Route path="/recommendations" element={<Recommendations userId={user ? user.id : ""} />} />
         <Route path="/store-builder" element={<StoreBuilder />} />
         <Route path="/blog-editor" element={<BlogEditor />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
