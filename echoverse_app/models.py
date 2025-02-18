@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser, Permission
-from django_otp.models import OTPModel
+from django.contrib.auth.models import User, AbstractUser, Group, Permission
+from django_otp.models import Device
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from cryptography.fernet import Fernet
 
@@ -322,12 +322,12 @@ class Mentorship(models.Model):
         return f"{self.mentor.username} -> {self.mentee.username}"
 
 # User OTP Models
-class UserOTP(OTPModel):
+class UserOTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    device = models.OneToOneField(TOTPDevice, on_delete=models.CASCADE)
+    otp_device = models.ForeignKey(TOTPDevice, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"2FA for {self.user.username}"
+        return f"OTP for {self.user.username}"
 
 # User Role Models
 class UserRole(models.Model):
@@ -339,10 +339,19 @@ class UserRole(models.Model):
 
 # Custom User
 class CustomUser(AbstractUser):
-    role = models.ForeignKey(UserRole, on_delete=models.SET_NULL, null=True, blank=True)
-
-    def has_permission(self, permission_name):
-        return self.role.permissions.filter(name=permission_name).exists()
+    """
+    Custom user model extending Django's AbstractUser.
+    """
+    groups = models.ManyToManyField(
+        Group,
+        related_name="customuser_groups",
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="customuser_permissions",
+        blank=True
+    )
 
 # Use this for encrypting/decrypting sensitive fields
 class SensitiveData(models.Model):
