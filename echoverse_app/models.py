@@ -420,3 +420,34 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Portfolio"
+
+# Knowledge Base Articles Models
+class KnowledgeBaseArticle(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+# Live Chat Session Models
+class LiveChatSession(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    started_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Chat with {self.user.username}"
+
+# Ticket Models
+class Ticket(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    issue_description = models.TextField()
+    status = models.CharField(max_length=255, choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Closed', 'Closed')], default='Open')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Ticket {self.id} - {self.status}"

@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, ActivityLog
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTrackerm, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, ActivityLog, KnowledgeBaseArticle, LiveChatSession, Ticket
 
 
 # Website Serializer
@@ -200,3 +200,21 @@ class ActivityLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityLog
         fields = ['id', 'user', 'action', 'timestamp']
+
+# Knowledge Base Article
+class KnowledgeBaseArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KnowledgeBaseArticle
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at']
+
+# Live Chat Session
+class LiveChatSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LiveChatSession
+        fields = ['id', 'user', 'started_at', 'ended_at', 'is_active']
+
+# Ticket
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ['id', 'user', 'issue_description', 'status', 'created_at', 'updated_at']
