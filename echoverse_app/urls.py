@@ -37,6 +37,11 @@ router.register(r'live-events', views.LiveEventViewSet)
 router.register(r'mentorships', views.MentorshipViewSet)
 router.register(r'user-roles', views.UserRoleViewSet)
 router.register(r'activity-logs', views.ActivityLogViewSet)
+router.register(r'leaderboards', views.LeaderboardViewSet)
+router.register(r'badges', views.BadgeViewSet)
+router.register(r'achievements', views.AchievementViewSet)
+router.register(r'group-projects', views.GroupProjectViewSet)
+router.register(r'portfolios', views.PortfolioViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),

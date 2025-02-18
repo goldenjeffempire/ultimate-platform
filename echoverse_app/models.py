@@ -374,3 +374,49 @@ class ActivityLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.action} at {self.timestamp}"
+
+# Leaderboard Models
+class Leaderboard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
+    rank = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.rank}"
+
+# Badge Models
+class Badge(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    image_url = models.URLField()
+
+    def __str__(self):
+        return self.name
+
+# Achievement Models
+class Achievement(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    achieved_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.user.username}"
+
+# Group Project Models
+class GroupProject(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    members = models.ManyToManyField(User)
+    deadline = models.DateTimeField()
+
+    def __str__(self):
+        return self.title
+
+# Portfolio Models
+class Portfolio(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    projects = models.TextField()  # Could store project data as JSON or other formats
+
+    def __str__(self):
+        return f"{self.user.username} Portfolio"

@@ -2,8 +2,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, CustomUser, ActivityLog
-from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer, CRMContactSerializer, EmailCampaignSerializer, AdCampaignSerializer, SalesFunnelSerializer, ChatbotInteractionSerializer, AlumniSerializer, JobPostingSerializer, LiveEventSerializer, MentorshipSerializer, UserRoleSerializer, ActivityLogSerializer
+from .models import Website, Template, ContentBlock, BlogCategory, BlogPost, BlogCollaboration, ProductCategory, Product, Order, Cart, ProductReview, UserProfile, Application, ProgressTracker, LearningModule, UserModuleProgress, Quiz, Question, UserQuizAnswer, Scholarship, Sponsorship, StudentPerformance, CRMContact, EmailCampaign, AdCampaign, SalesFunnel, ChatbotInteraction, Alumni, JobPosting, LiveEvent, Mentorship, UserRole, CustomUser, ActivityLog, Leaderboard, Badge, Achievement, GroupProject, Portfolio
+from .serializers import WebsiteSerializer, TemplateSerializer, ContentBlockSerializer, BlogCategorySerializer, BlogPostSerializer, BlogCollaborationSerializer, ProductCategorySerializer, ProductSerializer, OrderSerializer, CartSerializer, ProductReviewSerializer, UserProfileSerializer, ApplicationSerializer, ProgressTrackerSerializer, LearningModuleSerializer, UserModuleProgressSerializer, QuizSerializer, QuestionSerializer, UserQuizAnswerSerializer, ScholarshipSerializer, SponsorshipSerializer, StudentPerformanceSerializer, CRMContactSerializer, EmailCampaignSerializer, AdCampaignSerializer, SalesFunnelSerializer, ChatbotInteractionSerializer, AlumniSerializer, JobPostingSerializer, LiveEventSerializer, MentorshipSerializer, UserRoleSerializer, ActivityLogSerializer, LeaderboardSerializer, BadgeSerializer, AchievementSerializer, GroupProjectSerializer, PortfolioSerializer
 from .ai_logic import ai_generate_blog_content, ai_generate_design, ai_generate_content
 
 
@@ -243,3 +243,33 @@ class UserRoleViewSet(viewsets.ModelViewSet):
 class ActivityLogViewSet(viewsets.ModelViewSet):
     queryset = ActivityLog.objects.all()
     serializer_class = ActivityLogSerializer
+
+# Leaderboard
+class LeaderboardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Leaderboard
+        fields = ['id', 'user', 'points', 'rank']
+
+# Badge
+class BadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = ['id', 'name', 'description', 'image_url']
+
+# Achievement
+class AchievementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Achievement
+        fields = ['id', 'name', 'description', 'user', 'achieved_at']
+
+# Group Project
+class GroupProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupProject
+        fields = ['id', 'title', 'description', 'members', 'deadline']
+
+# Portfolio
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ['id', 'user', 'projects']
